@@ -1,0 +1,406 @@
+<template>
+  <div>
+    <br />
+    <h3>Nuevo Pedido</h3>
+    <hr />
+    <div class="row" style="width: 100%; margin: 0">
+      <div class="col-md-2"></div>
+      <div class="col-md-8 col-12">
+        <div v-if="continuar" class="container">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="white" for="">Tipo de Envio</label>
+                <select name="" id="" class="form-select" v-model="nuevoPedido.tipoEnvio">
+                  <option value="E-Commerce">E-Commerce</option>
+                  <option value="Express">Express</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <label class="white" for="">Modalidad</label>
+                <select class="form-select" name="" id="" v-model="nuevoPedido.modalidad">
+                  <option v-for="modalidad in modalidades" :key="modalidad.tipo">{{modalidad.tipo}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="white"  for="">Fecha de Envío</label>
+                <input type="date" class="form-control" v-model="nuevoPedido.fecha" />
+              </div>
+            </div>
+            <div class="col-6 mb-1">
+              <div class="form-group">
+                <label  class="white" for="">Tipo de carga</label>
+                <select name="" id="" class="form-select"  v-model="nuevoPedido.tipoCarga">
+                  <option v-for="tipo in tiposDeCarga" :key="tipo.tipo" :value="tipo.tipo">{{tipo.tipo}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12 mb-3">
+              <div class="tab-container">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                  <li class="nav-item" role="presentation" style="width: 50%">
+                    <button
+                      class="nav-link active"
+                      id="home-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#home"
+                      type="button"
+                      role="tab"
+                      aria-controls="home"
+                      aria-selected="true"
+                      style="width: 100%"
+                    >
+                      Origen
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation" style="width: 50%">
+                    <button
+                      class="nav-link"
+                      id="profile-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#profile"
+                      type="button"
+                      role="tab"
+                      aria-controls="profile"
+                      aria-selected="false"
+                      style="width: 100%"
+                    >
+                      Destino
+                    </button>
+                  </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="row pt-2">
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Nombre de Contacto</label>
+                          <input type="text" class="form-control" v-model="nuevoPedido.contactoRemitente" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Teléfono</label>
+                          <input type="text" class="form-control" v-model="nuevoPedido.telefonoRemitente"/>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Dirección</label>
+                          <input type="text" class="form-control" v-model="nuevoPedido.direccionRemitente"/>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Distrito</label>
+                          <!-- <model-list-select
+                            name="distritoConsignado"
+                            placeholder="Buscar distrito..."
+                            :list="distritos"
+                            option-text="distrito"
+                            option-value="distrito"
+                          /> -->
+                          <select name="" class="form-select" id="" v-model="nuevoPedido.distritoRemitente">
+														<option v-for="distrito in distritos" :key="distrito.id" :value="distrito.distrito">{{distrito.distrito}}</option>
+													</select>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Otro dato y/o observación</label>
+                          <textarea class="form-control" name="" id="" rows="3" style="resize:none;" v-model="nuevoPedido.otroDatoRemitente"
+                          placeholder="Tener precaución porque son productos de cristal..."></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="profile"  role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row pt-2">
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Empresa</label>
+                          <input type="text" class="form-control" v-model="nuevoPedido.empresaConsignado" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Nombre de Contacto</label>
+                          <input type="text" class="form-control" v-model="nuevoPedido.contactoConsignado" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Telefono</label>
+                          <input type="text" class="form-control" v-model="nuevoPedido.telefonoConsignado" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Dirección</label>
+                          <input type="text" class="form-control" v-model="nuevoPedido.direccionConsignado" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Distrito</label>
+                          <select name="" class="form-select" id="" v-model="nuevoPedido.distritoConsignado">
+														<option v-for="distrito in distritos" :key="distrito.id" :value="distrito.distrito">{{distrito.distrito}}</option>
+													</select>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Otro dato y/o observación</label>
+                          <textarea class="form-control" name="" id="" rows="3" style="resize:none;" v-model="nuevoPedido.otroDatoConsignado"
+                          placeholder="Tener precaución porque son productos de cristal..."></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="col-12">
+							<button class="btn btn-next w-100" @click="continuarPedido">Continuar</button>
+						</div>
+          </div>
+        </div>
+        <div v-if="!continuar" class="container">
+          <div class="row">
+            <div class="col-12 text-left card-pedido">
+              <div class="card-pedido-header flex space-between ">
+                <h5 class="white w-auto">Datos del pedido</h5>
+                
+                <button class="btn-sm btn-warning" @click="continuar = true"><i class="fas fa-edit"></i></button>
+              </div>
+              
+              <br>
+              <div class="flex">
+                <div class="w-50 pr-1">
+                  <h6 class="white">Fecha de envío:</h6>
+                  <p class="white-seconday">{{nuevoPedido.fecha}}</p>
+                </div>
+                <div class="w-50">
+                  <h6 class="white">Tipo de Envío:</h6>
+                  <p class="white-seconday">{{nuevoPedido.tipoEnvio}}</p>
+                </div>
+              </div>
+              <div class="flex">
+                <div class="w-65 pr-1">
+                  <h6 class="white">Tipo de Carga:</h6>
+                  <p class="white-seconday">{{nuevoPedido.tipoCarga}}</p>
+                </div>
+                <div class="w-35">
+                  <h6 class="white">Modalidad:</h6>
+                  <p class="white-seconday">{{nuevoPedido.modalidad}}</p>
+                </div>
+              </div>
+              <div class="flex">
+                <div class="w-65 pr-1">
+                  <h6 class="white">Origen:</h6>
+                  <p class="white-seconday">{{nuevoPedido.direccionRemitente}}, {{nuevoPedido.distritoRemitente}}</p>
+                </div>
+                <div class="w-35">
+                  <h6 class="white">Contacto:</h6>
+                  <p class="white-seconday">{{nuevoPedido.contactoRemitente}}, {{nuevoPedido.telefonoRemitente}}</p>
+                </div>
+              </div>
+              <h6 class="white">Observaciones en el Origen:</h6>
+              <p class="white-seconday">{{nuevoPedido.otroDatoRemitente}}</p>
+              <div class="flex">
+                <div class="w-65 pr-1">
+                  <h6 class="white">Destino:</h6>
+                  <p class="white-seconday">{{nuevoPedido.direccionConsignado}}, {{nuevoPedido.distritoConsignado}}</p>
+                </div>
+                <div class="w-35">
+                  <h6 class="white">Contacto:</h6>
+                  <p class="white-seconday">{{nuevoPedido.contactoConsignado}}, {{nuevoPedido.telefonoConsignado}}</p>
+                </div>
+              </div>
+              <h6 class="white">Observaciones en el Destino:</h6>
+              <p class="white-seconday">{{nuevoPedido.otroDatoConsignado}}</p>
+              <div class="flex">
+                <div class="w-65 pr-1">
+                  <h6 class="white">Distancia Total: </h6>
+                  <p class="white-seconday">{{nuevoPedido.distancia}} km</p>
+                </div>
+                <div class="w-35">
+                  <h6 class="white">Tarifa: </h6>
+                  <p class="white-seconday">S./ {{nuevoPedido.tarifa}}</p>
+                </div>
+              </div>
+              
+              <h6 class="white">Forma de pago predefinida: </h6>
+              <p class="white-seconday">Credito</p>
+            </div>
+            <div class="col-12"><br></div>
+            <div class="col-6">
+              <button class="btn btn-danger">Cancelar</button>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-accept" @click="handleAnadirPedido">Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { computed, onMounted, reactive, ref } from 'vue'
+import Pedido from '../../models/Pedido';
+//import { useRouter } from 'vue-router'
+// import { ModelListSelect } from "vue-search-select";
+
+import consultarApi from "@/services/maps.service";
+import calcularTarifa from "@/services/tarifa.service";
+import calcularEstadisticas from "@/services/ecoamigable.service";
+import PedidoService from "@/services/pedido.service";
+
+import { useStore } from 'vuex'
+
+export default {
+  components: {
+    // ModelListSelect
+  },
+  setup() {
+		const nuevoPedido = reactive(new Pedido());
+    nuevoPedido.tipoEnvio = "E-Commerce";
+    nuevoPedido.modalidad = "Una vía";
+    const continuar = ref(true);
+    //const tarifa = ref('');
+    //const distancia = ref('');
+    const store = useStore()
+
+    const distritos = computed(() => store.state.auxiliares.distritos);
+    const tiposDeCarga = computed(() => store.state.auxiliares.tiposDeCarga);
+    const modalidades = computed(() => store.state.auxiliares.modalidades);
+    const tiposDeEnvio = computed(() => store.state.auxiliares.tiposDeEnvio);
+    
+
+    onMounted(()=> {
+      store.dispatch("auxiliares/getDistritosLima");
+      store.dispatch("auxiliares/getTiposEnvios");
+      store.dispatch("auxiliares/getTiposCarga");
+      store.dispatch("auxiliares/getModalidades");
+    })
+
+    const continuarPedido = () => {
+      continuar.value = false;
+      calcularDistancia();
+    }
+
+    const calcularDistancia = async () => {
+      try {
+          nuevoPedido.distancia = await consultarApi(
+            nuevoPedido.direccionRemitente,
+            nuevoPedido.distritoRemitente,
+            nuevoPedido.direccionConsignado,
+            nuevoPedido.distritoConsignado
+          );
+
+          const response = calcularTarifa(
+            nuevoPedido.distancia,
+            nuevoPedido.tipoEnvio
+          );
+
+          nuevoPedido.tarifa = response.tarifa;
+          nuevoPedido.tarifaMemoria = response.tarifa;
+          nuevoPedido.tarifaSugerida = response.tarifaSugerida;
+
+          // Calcular las estadísticas Ecoamigables
+          const stats = calcularEstadisticas(nuevoPedido.distancia);
+          nuevoPedido.CO2Ahorrado = stats.co2;
+          nuevoPedido.ruido = stats.ruido;
+
+          return nuevoPedido.distancia;
+      } catch (error) {
+        console.error("Mensaje de error: ", error.message);
+      }
+    }
+
+    const handleAnadirPedido =  async () => {
+      try {
+        nuevoPedido.empresaRemitente = "EKOLO";
+        nuevoPedido.mobiker = "Asignar MoBiker";
+        nuevoPedido.status = 1;
+        nuevoPedido.recaudo = 0;
+        nuevoPedido.tramite = 0;
+        nuevoPedido.comision = nuevoPedido.tarifa * 0.6;
+        nuevoPedido.operador = store.getters.operador;
+        nuevoPedido.formaPago = "Transferencia";
+        nuevoPedido.rolCliente = "Remitente";
+        const response = await PedidoService.storageNuevoPedido(
+          nuevoPedido
+        );
+        console.log(response);
+
+      } catch (error) {
+        console.log(
+          error
+        );
+      }
+    }
+
+		return {
+			nuevoPedido,
+      continuar,
+      continuarPedido,
+      calcularDistancia,
+      handleAnadirPedido,
+      distritos,
+      tiposDeEnvio,
+      tiposDeCarga,
+      modalidades
+		}
+	},
+};
+</script>
+
+<style lang="scss">
+h6{
+  margin-bottom: 2px !important;
+}
+.container {
+  padding: 0px !important;
+}
+
+.tab-container {
+  border-radius: 5px;
+  background-color: white;
+	border: 0 !important;
+	padding-bottom: 5px;
+}
+.row {
+  width: 100%;
+  margin: 0 !important;
+}
+
+label {
+  font-weight: 500;
+}
+
+.nav-link.active {
+  background-color: #6bb5d8 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.nav-link {
+  color: #2c3e50 !important;
+  font-weight: 500;
+	border: 0 !important;
+}
+
+h4,
+h3 {
+  color: white !important;
+  font-weight: 600;
+}
+</style>

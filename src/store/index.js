@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-
+import { auxiliares } from "./auxiliares.module";
 // Auth Controllers
 import AuthService from "../services/auth.service";
 
@@ -49,6 +49,7 @@ export default createStore({
     }
   },
   modules: {
+    auxiliares
   },
 });
 

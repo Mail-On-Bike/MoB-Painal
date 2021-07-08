@@ -1,26 +1,23 @@
 <template>
-    <div class="login-container">
-        <div class="overlay">
-            <div class="login-form-container">
-                <div class="image-container">
-                    <div class="img-radius">
-                        <img src="../assets/MoB-logo.png" alt="">
-                    </div>
-                </div>   
-                <br><br>
-                <div class="form-group"> 
-                    <input type="email" v-model="user.email" class="form-control login-input" placeholder="Email">
+    <div class="overlay flex-center">
+        <div class="login-form-container">
+            <div class="image-container">
+                <div class="img-radius">
+                    <img src="../assets/MoB-logo.png" alt="">
                 </div>
-                <div class="form-group">
-                    <input type="password" v-model="user.password" class="form-control login-input" placeholder="Contraseña">
-                </div>
-                <div class="form-group">
-                    <br>
-                    <button class="btn btn-accept w-100 br-50" @click="login">Iniciar Sesión</button>
-                </div>
+            </div>   
+            <br><br>
+            <div class="form-group"> 
+                <input type="email" v-model="user.email" class="form-control login-input" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <input type="password" v-model="user.password" class="form-control login-input" placeholder="Contraseña">
+            </div>
+            <div class="form-group">
+                <br>
+                <button class="btn btn-accept w-100 br-50" @click="login">Iniciar Sesión</button>
             </div>
         </div>
-        
     </div>
 </template>
 
@@ -98,24 +95,10 @@ export default {
     margin-bottom: 10px;
 }
 
-.login-container{
-    width: 100%;
-    height: 100vh;
-    background-image: url(http://mailonbike.com/wp-content/uploads/2018/09/169937362.jpeg);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-}
 
-.overlay{
-    width: 100%;
-    height: 100%;
-    //background-color: rgba(2, 7, 22, 0.89);
-    background: rgba(5, 43, 141, 0.712);
-    background: linear-gradient(90deg, rgba(5, 43, 141, 0.89) 0%, rgba(39, 117, 169, 0.897) 50%, rgba(70, 185, 195, 0.897)100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
+
+
+
 
 </style>
