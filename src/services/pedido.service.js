@@ -52,6 +52,8 @@ class PedidoService {
           rolCliente: nuevoPedido.rolCliente,
           operador: nuevoPedido.operador,
           viajes: nuevoPedido.viajes,
+          isRuteo: nuevoPedido.isRuteo,
+          ruteoId: nuevoPedido.ruteoId
         },
         { headers: authHeader() }
       );
@@ -203,6 +205,31 @@ class PedidoService {
       return result;
     } catch (error) {
       console.error(`Mensaje de error desde MobikerService: ${error.message}`);
+    }
+  }
+
+  async getPedidoByCliente(idCliente){
+    try {
+      let pedidos = await axios.get(`${API_URL}/clientes/pedidos-del-cliente/${idCliente}`, {
+        headers: authHeader(),
+      });
+
+      return pedidos;
+    } catch (error) {
+      console.error("Mensaje de error: ", error.message);
+    }
+  }
+
+  async getPedidosDelCliente(params) {
+    try {
+      let pedidos = await axios.get(`${API_URL}/clientes/pedidos`, {
+        params,
+        headers: authHeader(),
+      });
+
+      return pedidos;
+    } catch (error) {
+      console.error("Mensaje de error: ", error.message);
     }
   }
 }

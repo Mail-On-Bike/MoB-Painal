@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import NuevoPedido from '../views/Pedidos/NuevoPedido.vue'
+import MisPedidos from '../views/Pedidos/MisPedidos.vue'
+import Configuracion from '../views/Perfil/Configuracion.vue'
 
 const routes = [
   {
@@ -20,6 +22,16 @@ const routes = [
     component: NuevoPedido
   },
   {
+    path: '/misPedidos',
+    name: 'MisPedidos',
+    component: MisPedidos
+  },
+  {
+    path: '/configuracion',
+    name: 'Configuracion',
+    component: Configuracion
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
@@ -33,5 +45,17 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ["/login"];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem("user");
+
+  if (authRequired && !loggedIn) {
+    next("/login");
+  } else {
+    next();
+  }
+});
 
 export default router

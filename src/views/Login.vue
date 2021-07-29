@@ -25,6 +25,7 @@
 import {useStore} from "vuex"
 import { reactive, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 
 export default {
     setup() {
@@ -44,9 +45,35 @@ export default {
         
         // methods
         const login = async () => {
+            Swal.fire({
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                },
+            })
             let response = await store.dispatch("login", user);
-            if(response.accessToken){
-                router.push("/");
+            if(response){
+                if(response.accesToken != ""){
+                    router.push("/");
+                    Swal.fire({
+                        title: 'Loggeado!',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                    })
+                    setTimeout(function(){
+                        
+                        Swal.close();
+                    }, 1000)
+                    
+                }
+            }else{
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'Usuario o contraseña incorrectos',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                })
             }
         }
 

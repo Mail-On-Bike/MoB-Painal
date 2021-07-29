@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <br />
-    <h3>Nuevo Pedido</h3>
-    <hr />
+    <h3 class="text-center">Nuevo Pedido</h3>
     <div class="row" style="width: 100%; margin: 0">
       <div class="col-md-2"></div>
       <div class="col-md-8 col-12">
@@ -78,20 +75,25 @@
                     <div class="row pt-2">
                       <div class="col-12">
                         <div class="form-group">
+                          <input type="checkbox" v-model="usarMiInfoRemitente" @change="checkRemitente($event)"> Llenar con mi información
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
                           <label for="">Nombre de Contacto</label>
-                          <input type="text" class="form-control" v-model="nuevoPedido.contactoRemitente" />
+                          <input type="text" class="form-control" v-bind:class="{ empty: (validar && nuevoPedido.contactoRemitente == '')}" v-model="nuevoPedido.contactoRemitente" />
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Teléfono</label>
-                          <input type="text" class="form-control" v-model="nuevoPedido.telefonoRemitente"/>
+                          <input type="text" class="form-control" v-bind:class="{ empty: (validar && nuevoPedido.telefonoRemitente == '')}" v-model="nuevoPedido.telefonoRemitente"/>
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Dirección</label>
-                          <input type="text" class="form-control" v-model="nuevoPedido.direccionRemitente"/>
+                          <input type="text" class="form-control" v-bind:class="{ empty: (validar && nuevoPedido.direccionRemitente == '')}" v-model="nuevoPedido.direccionRemitente"/>
                         </div>
                       </div>
                       <div class="col-12">
@@ -104,7 +106,7 @@
                             option-text="distrito"
                             option-value="distrito"
                           /> -->
-                          <select name="" class="form-select" id="" v-model="nuevoPedido.distritoRemitente">
+                          <select name="" class="form-select" v-bind:class="{ empty: validar && (nuevoPedido.distritoRemitente == '')}" id="" v-model="nuevoPedido.distritoRemitente">
 														<option v-for="distrito in distritos" :key="distrito.id" :value="distrito.distrito">{{distrito.distrito}}</option>
 													</select>
                         </div>
@@ -122,32 +124,37 @@
                     <div class="row pt-2">
                       <div class="col-12">
                         <div class="form-group">
-                          <label for="">Empresa</label>
+                          <input type="checkbox" v-model="usarMiInfoConsignado" @change="checkConsignado($event)"> Llenar con mi información
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group">
+                          <label for="">Empresa (Opcional)</label>
                           <input type="text" class="form-control" v-model="nuevoPedido.empresaConsignado" />
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Nombre de Contacto</label>
-                          <input type="text" class="form-control" v-model="nuevoPedido.contactoConsignado" />
+                          <input type="text" class="form-control" v-bind:class="{ empty: (validar && nuevoPedido.contactoConsignado == '')}" v-model="nuevoPedido.contactoConsignado" />
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Telefono</label>
-                          <input type="text" class="form-control" v-model="nuevoPedido.telefonoConsignado" />
+                          <input type="text" class="form-control" v-bind:class="{ empty: (validar && nuevoPedido.telefonoConsignado == '')}" v-model="nuevoPedido.telefonoConsignado" />
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Dirección</label>
-                          <input type="text" class="form-control" v-model="nuevoPedido.direccionConsignado" />
+                          <input type="text" class="form-control" v-bind:class="{ empty: (validar && nuevoPedido.direccionConsignado == '')}" v-model="nuevoPedido.direccionConsignado" />
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Distrito</label>
-                          <select name="" class="form-select" id="" v-model="nuevoPedido.distritoConsignado">
+                          <select name="" class="form-select" v-bind:class="{ empty: (validar && nuevoPedido.distritoConsignado == '')}" id="" v-model="nuevoPedido.distritoConsignado">
 														<option v-for="distrito in distritos" :key="distrito.id" :value="distrito.distrito">{{distrito.distrito}}</option>
 													</select>
                         </div>
@@ -175,7 +182,7 @@
               <div class="card-pedido-header flex space-between ">
                 <h5 class="white w-auto">Datos del pedido</h5>
                 
-                <button class="btn-sm btn-warning" @click="continuar = true"><i class="fas fa-edit"></i></button>
+                <button class="btn-sm btn-warning" @click="editarPedido"><i class="fas fa-edit"></i></button>
               </div>
               
               <br>
@@ -249,7 +256,7 @@
       </div>
       <div class="col-md-3"></div>
     </div>
-  </div>
+
 </template>
 
 <script>
@@ -262,8 +269,9 @@ import consultarApi from "@/services/maps.service";
 import calcularTarifa from "@/services/tarifa.service";
 import calcularEstadisticas from "@/services/ecoamigable.service";
 import PedidoService from "@/services/pedido.service";
-
-import { useStore } from 'vuex'
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 
 export default {
   components: {
@@ -271,18 +279,19 @@ export default {
   },
   setup() {
 		const nuevoPedido = reactive(new Pedido());
-    nuevoPedido.tipoEnvio = "E-Commerce";
-    nuevoPedido.modalidad = "Una vía";
     const continuar = ref(true);
-    //const tarifa = ref('');
-    //const distancia = ref('');
+    const usarMiInfoRemitente = ref(false);
+    const usarMiInfoConsignado = ref(false);
+    const validar = ref(false);
+
     const store = useStore()
+    const router = useRouter();
 
     const distritos = computed(() => store.state.auxiliares.distritos);
     const tiposDeCarga = computed(() => store.state.auxiliares.tiposDeCarga);
     const modalidades = computed(() => store.state.auxiliares.modalidades);
     const tiposDeEnvio = computed(() => store.state.auxiliares.tiposDeEnvio);
-    
+    const clienteData = computed(() => store.getters.clienteData);
 
     onMounted(()=> {
       store.dispatch("auxiliares/getDistritosLima");
@@ -291,9 +300,66 @@ export default {
       store.dispatch("auxiliares/getModalidades");
     })
 
-    const continuarPedido = () => {
-      continuar.value = false;
-      calcularDistancia();
+    nuevoPedido.fecha ='';
+    nuevoPedido.tipoEnvio = clienteData.value.tipoDeEnvio.tipo
+    nuevoPedido.modalidad = "Una vía";
+    nuevoPedido.tipoCarga = clienteData.value.tipoDeCarga.tipo
+    nuevoPedido.tipoEnvio = clienteData.value.tipoDeEnvio.tipo
+    nuevoPedido.formaPago = clienteData.value.formaDePago.pago
+    nuevoPedido.rolCliente = clienteData.value.rolCliente.rol;
+    nuevoPedido.operador = store.getters.operador;
+
+    nuevoPedido.empresaRemitente = clienteData.value.razonComercial;
+    nuevoPedido.contactoRemitente = '';
+    nuevoPedido.telefonoRemitente = '';
+    nuevoPedido.direccionRemitente = '';
+    nuevoPedido.distritoRemitente = '';
+    nuevoPedido.otroDatoRemitente = '';
+
+    nuevoPedido.empresaConsignado = '';
+    nuevoPedido.contactoConsignado = '';
+    nuevoPedido.telefonoConsignado = '';
+    nuevoPedido.direccionConsignado = '';
+    nuevoPedido.distritoConsignado = '';
+    nuevoPedido.otroDatoConsignado = '';
+    
+    nuevoPedido['isRuteo'] = false;
+    nuevoPedido['ruteoId'] = null;
+    
+    const continuarPedido = () => {    
+      console.log(validarForm())  
+      if(validarForm()){
+        validar.value = true;
+          Swal.fire({
+            title: 'Oops!',
+            text: 'Tienes algunos campos vacíos',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          })
+      } else {
+        continuar.value = false;
+        calcularDistancia();
+      }      
+    }
+
+    const editarPedido = () => {
+      continuar.value = true;
+      //validar.value = false;
+    }
+
+    const validarForm = () => {
+      if(nuevoPedido.contactoRemitente == '' ||
+          nuevoPedido.telefonoRemitente == '' ||
+          nuevoPedido.direccionRemitente == '' ||
+          nuevoPedido.distritoRemitente == '' ||
+          nuevoPedido.contactoConsignado == '' ||
+          nuevoPedido.telefonoConsignado == '' ||
+          nuevoPedido.direccionConsignado == '' ||
+          nuevoPedido.distritoConsignado == ''){
+            return true;
+      } else {
+        return false
+      }
     }
 
     const calcularDistancia = async () => {
@@ -307,7 +373,8 @@ export default {
 
           const response = calcularTarifa(
             nuevoPedido.distancia,
-            nuevoPedido.tipoEnvio
+            nuevoPedido.tipoEnvio,
+            nuevoPedido.modalidad
           );
 
           nuevoPedido.tarifa = response.tarifa;
@@ -327,24 +394,61 @@ export default {
 
     const handleAnadirPedido =  async () => {
       try {
-        nuevoPedido.empresaRemitente = "EKOLO";
         nuevoPedido.mobiker = "Asignar MoBiker";
         nuevoPedido.status = 1;
         nuevoPedido.recaudo = 0;
         nuevoPedido.tramite = 0;
         nuevoPedido.comision = nuevoPedido.tarifa * 0.6;
-        nuevoPedido.operador = store.getters.operador;
-        nuevoPedido.formaPago = "Transferencia";
-        nuevoPedido.rolCliente = "Remitente";
+        
         const response = await PedidoService.storageNuevoPedido(
           nuevoPedido
         );
-        console.log(response);
+        
+        if(response.status === 200){
+          Swal.fire({
+            title: '¡Genial!',
+            text: response.data.message,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            timer: 2000
+          });
+          router.push("/misPedidos");
+        }
 
       } catch (error) {
         console.log(
           error
         );
+      }
+    }
+
+    const checkRemitente = () => {
+      if (usarMiInfoRemitente.value){
+        nuevoPedido.contactoRemitente = clienteData.value.contacto
+        nuevoPedido.direccionRemitente = clienteData.value.direccion
+        nuevoPedido.distritoRemitente = clienteData.value.distrito.distrito
+        nuevoPedido.telefonoRemitente = clienteData.value.telefono
+      }else{
+        nuevoPedido.contactoRemitente = ""
+        nuevoPedido.direccionRemitente = ""
+        nuevoPedido.distritoRemitente = ""
+        nuevoPedido.telefonoRemitente = ""
+      }
+    }
+
+    const checkConsignado = () => {
+      if (usarMiInfoConsignado.value){
+        nuevoPedido.contactoConsignado = clienteData.value.contacto
+        nuevoPedido.direccionConsignado = clienteData.value.direccion
+        nuevoPedido.distritoConsignado = clienteData.value.distrito.distrito
+        nuevoPedido.telefonoConsignado = clienteData.value.telefono
+        nuevoPedido.empresaConsignado = clienteData.value.razonComercial;
+      }else{
+        nuevoPedido.contactoConsignado = ""
+        nuevoPedido.direccionConsignado = ""
+        nuevoPedido.distritoConsignado = ""
+        nuevoPedido.telefonoConsignado = ""
+        nuevoPedido.empresaConsignado = ""
       }
     }
 
@@ -354,10 +458,17 @@ export default {
       continuarPedido,
       calcularDistancia,
       handleAnadirPedido,
+      checkRemitente,
+      checkConsignado,
+      editarPedido,
       distritos,
       tiposDeEnvio,
       tiposDeCarga,
-      modalidades
+      modalidades,
+      clienteData,
+      usarMiInfoRemitente,
+      usarMiInfoConsignado,
+      validar
 		}
 	},
 };
@@ -376,6 +487,17 @@ h6{
   background-color: white;
 	border: 0 !important;
 	padding-bottom: 5px;
+  .nav-link.active {
+    background-color: #6bb5d8 !important;
+    color: white !important;
+    font-weight: 600;
+  }
+
+  .nav-link {
+    color: #2c3e50 !important;
+    font-weight: 500;
+    border: 0 !important;
+  }
 }
 .row {
   width: 100%;
@@ -386,17 +508,7 @@ label {
   font-weight: 500;
 }
 
-.nav-link.active {
-  background-color: #6bb5d8 !important;
-  color: white !important;
-  font-weight: 600;
-}
 
-.nav-link {
-  color: #2c3e50 !important;
-  font-weight: 500;
-	border: 0 !important;
-}
 
 h4,
 h3 {

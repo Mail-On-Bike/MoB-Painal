@@ -27,8 +27,22 @@ export default createStore({
     async login({ commit }, user) {
       try {
         const usuarioLogin = await AuthService.login(user);
-        commit("loginSuccess", usuarioLogin);
-        return Promise.resolve(usuarioLogin);
+        if(usuarioLogin != undefined){
+          commit("loginSuccess", usuarioLogin);
+          return Promise.resolve(usuarioLogin);
+        }else{
+          console.log("Error en el login")
+        }
+      } catch (error) {
+        console.error(`Error en el login: ${error}`);
+        return Promise.reject(error);
+      }
+    },
+
+    updateProfile({commit}, user) {
+      try {
+        commit("loginSuccess", user);
+        return Promise.resolve(user);
       } catch (error) {
         console.error(`Error en el login: ${error}`);
         return Promise.reject(error);
@@ -46,7 +60,10 @@ export default createStore({
     },
     loggedIn: (state) => {
       return state.loggedIn;
-    }
+    },
+    clienteData: (state) => {
+      return state.user.clienteAsignado
+    },
   },
   modules: {
     auxiliares
