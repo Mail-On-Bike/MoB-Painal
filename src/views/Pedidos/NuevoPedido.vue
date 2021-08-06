@@ -8,7 +8,7 @@
             <div class="col-12">
               <div class="form-group">
                 <label class="white" for="">Tipo de Envio</label>
-                <select name="" id="" class="form-select" v-model="nuevoPedido.tipoEnvio">
+                <select @change="changeDistritos($event)" name="" id="" class="form-select" v-model="nuevoPedido.tipoEnvio">
                   <option value="E-Commerce">E-Commerce</option>
                   <option value="Express">Express</option>
                 </select>
@@ -287,7 +287,8 @@ export default {
     const store = useStore()
     const router = useRouter();
 
-    const distritos = computed(() => store.state.auxiliares.distritos);
+    let distritos = ref();
+    
     const tiposDeCarga = computed(() => store.state.auxiliares.tiposDeCarga);
     const modalidades = computed(() => store.state.auxiliares.modalidades);
     const tiposDeEnvio = computed(() => store.state.auxiliares.tiposDeEnvio);
@@ -295,6 +296,7 @@ export default {
 
     onMounted(()=> {
       store.dispatch("auxiliares/getDistritosLima");
+      store.dispatch("auxiliares/getZonaCobertura");
       store.dispatch("auxiliares/getTiposEnvios");
       store.dispatch("auxiliares/getTiposCarga");
       store.dispatch("auxiliares/getModalidades");
@@ -308,6 +310,18 @@ export default {
     nuevoPedido.formaPago = clienteData.value.formaDePago.pago
     nuevoPedido.rolCliente = clienteData.value.rolCliente.rol;
     nuevoPedido.operador = store.getters.operador;
+
+    if(nuevoPedido.tipoEnvio === 'E-Commerce'){
+      distritos.value = store.state.auxiliares.zonaCobertura;
+      Swal.fire({
+            title: '¡Hey!',
+            text: 'Te recordamos que hay algunos distritos que nos los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
+            icon: 'info',
+            confirmButtonText: 'OK'
+          })  
+    }else{
+      distritos.value = store.state.auxiliares.distritos; 
+    }
 
     nuevoPedido.empresaRemitente = clienteData.value.razonComercial;
     nuevoPedido.contactoRemitente = '';
@@ -325,9 +339,24 @@ export default {
     
     nuevoPedido['isRuteo'] = false;
     nuevoPedido['ruteoId'] = null;
+
+    const changeDistritos = (e) =>{
+      nuevoPedido.distritoConsignado= '';
+      nuevoPedido.distritoRemitente= '';
+      if(e.target.value === 'E-Commerce'){
+        Swal.fire({
+            title: '¡Hey!',
+            text: 'Te recordamos que hay algunos distritos que nos los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
+            icon: 'info',
+            confirmButtonText: 'OK'
+          })  
+        distritos.value = store.state.auxiliares.zonaCobertura; 
+      }else{
+        distritos.value = store.state.auxiliares.distritos;
+      }
+    }
     
-    const continuarPedido = () => {    
-      console.log(validarForm())  
+    const continuarPedido = () => { 
       if(validarForm()){
         validar.value = true;
           Swal.fire({
@@ -461,6 +490,7 @@ export default {
       checkRemitente,
       checkConsignado,
       editarPedido,
+      changeDistritos,
       distritos,
       tiposDeEnvio,
       tiposDeCarga,
