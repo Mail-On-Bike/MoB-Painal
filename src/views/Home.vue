@@ -1,6 +1,6 @@
 <template>
     <div class="overlay">
-      <h4>holaaaa</h4>
+      <h4>Bienvenido a Mail on Bike</h4>
     </div>
 </template>
 
