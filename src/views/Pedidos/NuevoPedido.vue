@@ -246,7 +246,7 @@
             </div>
             <div class="col-12"><br></div>
             <div class="col-6">
-              <button class="btn btn-danger">Cancelar</button>
+              <button class="btn btn-danger" @click="home">Cancelar</button>
             </div>
             <div class="col-6">
               <button class="btn btn-accept" @click="handleAnadirPedido">Confirmar</button>
@@ -481,6 +481,10 @@ export default {
       }
     }
 
+    const home = () => {
+      window.location = '/';
+    }
+
 		return {
 			nuevoPedido,
       continuar,
@@ -498,7 +502,8 @@ export default {
       clienteData,
       usarMiInfoRemitente,
       usarMiInfoConsignado,
-      validar
+      validar,
+      home
 		}
 	},
 };
