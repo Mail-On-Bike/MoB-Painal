@@ -91,7 +91,7 @@
 								<span class="w-100">{{pedido.direccionConsignado}}, {{pedido.distrito.distrito}}</span>
 							</div>
 							<div style="display:flex; flex-direction:column; justify-content: space-between; margin-left:10px">
-								<span style="text-align:right;">20/20/2020</span>
+								<span style="text-align:right;">{{formatDate(pedido.fecha)}}</span>
 								<div style="text-align:right;">
 									<span class="pedido-tag"
 										:class="{bg_programado:(pedido.statusId == 1), 
@@ -151,7 +151,7 @@
 								<span class="w-100">{{pedido.direccionConsignado}}, {{pedido.distrito.distrito}}</span>
 							</div>
 							<div style="display:flex; flex-direction:column; justify-content: space-between; margin-left:10px">
-								<span style="text-align:right;">20/20/2020</span>
+								<span style="text-align:right;">{{formatDate(pedido.fecha)}}</span>
 								<div style="text-align:right;">
 									<span class="pedido-tag"
 										:class="{bg_programado:(pedido.statusId == 1), 
@@ -207,7 +207,7 @@
 								<span class="w-100">{{pedido.direccionConsignado}}, {{pedido.distrito.distrito}}</span>
 							</div>
 							<div style="display:flex; flex-direction:column; justify-content: space-between; margin-left:10px">
-								<span style="text-align:right;">20/20/2020</span>
+								<span style="text-align:right;">{{formatDate(pedido.fecha)}}</span>
 								<div style="text-align:right;">
 									<span class="pedido-tag" 
 										:class="{bg_entregado:(pedido.statusId == 4), 
@@ -259,7 +259,7 @@
 								<span class="w-100">{{pedido.direccionConsignado}}, {{pedido.distrito.distrito}}</span>
 							</div>
 							<div style="display:flex; flex-direction:column; justify-content: space-between; margin-left:10px">
-								<span style="text-align:right;">20/20/2020</span>
+								<span style="text-align:right;">{{formatDate(pedido.fecha)}}</span>
 								<div style="text-align:right;">
 									<span class="pedido-tag" :class="{bg_anulado:(pedido.statusId == 6)}">
 										{{pedido.status.tag}}
@@ -389,7 +389,7 @@ export default {
 			totalPedidosFinalizados.value = pedidosFinalizados.value.length;
 			pedidosFinalizadosPaginados.value = paginar(pedidosFinalizados.value);
 
-			// Pedidos Finalizados (Status 6:Anulado)
+			// Pedidos Anulados (Status 6:Anulado)
 			pedidosAnulados.value = pedidosTodos.value.filter((pedido) => {
 				if(pedido.statusId == 6){
 					return pedido;
@@ -397,7 +397,12 @@ export default {
 			})
 			totalPedidosAnulados.value = pedidosAnulados.value.length;
 			pedidosAnuladosPaginados.value = paginar(pedidosAnulados.value);
-			
+		}
+
+		const formatDate = (date) => {
+			let dateSplited = date.split('T')[0];
+			let newDate = dateSplited.split('-')
+			return newDate[2] + '/' + newDate[1] + '/' + newDate[0];
 		}
 
 		const paginar = (pedidosParaPaginar, max = 5) => {
@@ -477,7 +482,8 @@ export default {
 			changePage,
 			getPedidos,
 			detallesPedido,
-			closeModal
+			closeModal,
+			formatDate
 		}
 	}
 };

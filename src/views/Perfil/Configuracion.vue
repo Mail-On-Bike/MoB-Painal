@@ -7,10 +7,9 @@
 					<div class="col-12 profile-container">
 						<div class="row">
 							<div class="col-12">
-								<div class="profile-header" style="padding:5px; display:flex; align-items:center;">
-									<div class="col-3 img-profile" style="">
-									</div>
-									<div style="col-9 padding: 5px; line-height:14px;">
+								<div class="profile-header" style="">
+									<div class="img-profile" style=""></div>
+									<div class="profile-info" style="">
 										<h6>{{user.clienteAsignado.razonComercial}}</h6>
 										<span>{{user.username}}</span>
 										<div class="indicators">
@@ -33,25 +32,25 @@
 									</div>
 									
 								</div>
-								<div class="col-md-3 col-sm-6 col-xs-12">
+								<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 									<div class="profile-item">
 										<label>Nombre de contacto</label>
 										<b>{{user.contacto}}</b>
 									</div>
 								</div>
-								<div class="col-md-3 col-sm-6 col-xs-12">
+								<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 									<div class="profile-item">
 										<label>Email</label>
 										<b>{{user.email}}</b>
 									</div>
 								</div>
-								<div class="col-md-3 col-sm-6 col-xs-12">
+								<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 									<div class="profile-item">
 										<label>Teléfono</label>
 										<b>{{user.telefono}}</b>
 									</div>
 								</div>
-								<div class="col-md-3 col-sm-6 col-xs-12" style="min-height: 62px;">
+								<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="min-height: 62px;">
 									<div class="profile-item">
 										<label>Contraseña</label>
 										<div style="display:flex;justify-content:space-between; align-items:center; ">
@@ -258,7 +257,13 @@ export default {
 <style lang="scss">
 @import "../../assets/scss/_variables.scss";
 
+.profile-header{
+	padding:5px; display:flex; align-items:center;
+}
 
+.profile-info{
+	padding: 5px; line-height:18px;
+}
 
 .profile-container{
 	padding: 15px 0px !important;
@@ -308,11 +313,12 @@ export default {
 }
 
 .img-profile{
-	min-width: 60px; 
+	min-width: 70px; 
 	min-height: 70px; 
 	height: auto;
 	border-radius: 50%; background-color: aliceblue;
 	margin-right: 10px;
+	max-width: 70px;
 }
 
 .pswd-hide-input{
