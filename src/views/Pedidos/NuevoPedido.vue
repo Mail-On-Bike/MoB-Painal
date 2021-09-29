@@ -114,8 +114,7 @@
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Otro dato y/o observación</label>
-                          <textarea class="form-control" name="" id="" rows="3" style="resize:none;" v-model="nuevoPedido.otroDatoRemitente"
-                          placeholder="Tener precaución porque son productos de cristal..."></textarea>
+                          <textarea class="form-control" name="" id="" rows="3" style="resize:none;" v-model="nuevoPedido.otroDatoRemitente"></textarea>
                         </div>
                       </div>
                     </div>
@@ -162,8 +161,7 @@
                       <div class="col-12">
                         <div class="form-group">
                           <label for="">Otro dato y/o observación</label>
-                          <textarea class="form-control" name="" id="" rows="3" style="resize:none;" v-model="nuevoPedido.otroDatoConsignado"
-                          placeholder="Tener precaución porque son productos de cristal..."></textarea>
+                          <textarea class="form-control" name="" id="" rows="3" style="resize:none;" v-model="nuevoPedido.otroDatoConsignado"></textarea>
                         </div>
                       </div>
                     </div>
@@ -187,11 +185,11 @@
               
               <br>
               <div class="flex">
-                <div class="w-50 pr-1">
+                <div class="w-65 pr-1">
                   <h6 class="white">Fecha de envío:</h6>
                   <p class="white-seconday">{{nuevoPedido.fecha}}</p>
                 </div>
-                <div class="w-50">
+                <div class="w-35">
                   <h6 class="white">Tipo de Envío:</h6>
                   <p class="white-seconday">{{nuevoPedido.tipoEnvio}}</p>
                 </div>
