@@ -5,12 +5,19 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build-testing": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.21.1",
+    "bootstrap": "^5.0.2",
     "core-js": "^3.6.5",
+    "jquery": "^3.6.0",
+    "popper.js": "^1.16.1",
+    "sweetalert2": "^11.0.18",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
+    "vue-search-select": "^2.9.3",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
