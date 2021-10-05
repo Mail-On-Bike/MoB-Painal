@@ -1,4 +1,5 @@
 import axios from "axios";
+import authHeader from "@/services/auth-header";
 
 export default async function consultarApi(
   origen,
@@ -6,26 +7,19 @@ export default async function consultarApi(
   destino,
   distritoDestino
 ) {
-  const start = `${origen.replace(/ /g, "+")}+${distritoOrigen.replace(
-    / /g,
-    "+"
-  )}`;
+  try {
+    const { data } = await axios.post(
+      `${process.env.VUE_APP_HERMES}/consultar-google-maps-api`,
+      { origen, distritoOrigen, destino, distritoDestino },
+      {
+        headers: authHeader(),
+      }
+    );
 
-  const end = `${destino.replace(/ /g, "+")}+${distritoDestino.replace(
-    / /g,
-    "+"
-  )}`;
-
-  const Maps_API =
-    "https://maps.googleapis.com/maps/api/distancematrix/json?&mode=walking";
-
-  const API_URL = `${Maps_API}&origins=${start}&destinations=${end}&key=${process.env.VUE_APP_MAPS_API_KEY}`;
-
-  const distancia = await axios.get(API_URL);
-
-  const distanciaCalculada = +(
-    distancia.data.rows[0].elements[0].distance.value / 1000
-  ).toFixed(1);
-
-  return distanciaCalculada;
+    return data;
+  } catch (error) {
+    console.error(
+      `Error desde el servicio Consultar API del Maps: ${error.message}`
+    );
+  }
 }
