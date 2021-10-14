@@ -420,7 +420,7 @@
 <script>
 import { computed, onMounted, reactive, ref } from "vue";
 import Pedido from "../../models/Pedido";
-//import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 // import { ModelListSelect } from "vue-search-select";
 
 import consultarApi from "@/services/maps.service";
@@ -428,7 +428,6 @@ import calcularTarifa from "@/services/tarifa.service";
 import calcularEstadisticas from "@/services/ecoamigable.service";
 import PedidoService from "@/services/pedido.service";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 
 export default {
@@ -640,7 +639,7 @@ export default {
     };
 
     const home = () => {
-      window.location = "/";
+      router.go(-1);
     };
 
     return {
