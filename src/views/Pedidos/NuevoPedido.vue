@@ -569,8 +569,6 @@ export default {
           nuevoPedido.distritoConsignado
         );
 
-        console.log("calcular la tarifa", response);
-
         nuevoPedido.tarifa = response.tarifa;
         nuevoPedido.tarifaMemoria = response.tarifa;
         nuevoPedido.tarifaSugerida = response.tarifaSugerida;
