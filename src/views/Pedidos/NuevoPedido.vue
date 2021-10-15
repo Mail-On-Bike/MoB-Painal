@@ -573,7 +573,7 @@ export default {
         nuevoPedido.tarifaSugerida = response.tarifaSugerida;
 
         // Calcular las estadísticas Ecoamigables
-        const stats = calcularEstadisticas(nuevoPedido.distancia);
+        const stats = await calcularEstadisticas(nuevoPedido.distancia);
         nuevoPedido.CO2Ahorrado = stats.co2;
         nuevoPedido.ruido = stats.ruido;
 
