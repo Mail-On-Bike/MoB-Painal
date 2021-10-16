@@ -3,7 +3,10 @@ import { auxiliares } from "./auxiliares.module";
 // Auth Controllers
 import AuthService from "../services/auth.service";
 
-const initialState = JSON.parse(localStorage.getItem("user"));
+if (!localStorage.getItem("user_mob_painal").startsWith("{"))
+  localStorage.clear();
+
+const initialState = JSON.parse(localStorage.getItem("user_mob_painal"));
 
 export default createStore({
   namespaced: true,
@@ -15,7 +18,7 @@ export default createStore({
     loginSuccess(state, payload) {
       state.user = payload;
       state.loggedIn = true;
-      localStorage.setItem("user", JSON.stringify(payload));
+      localStorage.setItem("user_mob_painal", JSON.stringify(payload));
     },
 
     logout(state) {
@@ -27,11 +30,11 @@ export default createStore({
     async login({ commit }, user) {
       try {
         const usuarioLogin = await AuthService.login(user);
-        if(usuarioLogin != undefined){
+        if (usuarioLogin != undefined) {
           commit("loginSuccess", usuarioLogin);
           return Promise.resolve(usuarioLogin);
-        }else{
-          console.log("Error en el login")
+        } else {
+          console.log("Error en el login");
         }
       } catch (error) {
         console.error(`Error en el login: ${error}`);
@@ -39,7 +42,7 @@ export default createStore({
       }
     },
 
-    updateProfile({commit}, user) {
+    updateProfile({ commit }, user) {
       try {
         commit("loginSuccess", user);
         return Promise.resolve(user);
@@ -62,11 +65,10 @@ export default createStore({
       return state.loggedIn;
     },
     clienteData: (state) => {
-      return state.user.clienteAsignado
+      return state.user.clienteAsignado;
     },
   },
   modules: {
-    auxiliares
+    auxiliares,
   },
 });
-

@@ -8,6 +8,14 @@ Al empezar el proyecto, primero hay que instalar todas las dependencias.
 npm install
 ```
 
+---
+
+## Variables de entorno
+
+- `NODE_ENV` determinar el entorno de la app.
+- `VUE_APP_TITLE` Configura el `title` de la app en el navegador.
+- `VUE_APP_HERMES` URL de Hermes
+
 ### Compiles and hot-reloads for development
 
 Servidor para desarrollo
