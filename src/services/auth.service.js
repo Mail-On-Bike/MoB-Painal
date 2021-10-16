@@ -11,7 +11,7 @@ class AuthService {
       });
 
       if (response.data.accessToken) {
-        localStorage.setItem("user", JSON.stringify(response.data));
+        localStorage.setItem("user_mob_painal", JSON.stringify(response.data));
 
         return response.data;
       }
@@ -21,15 +21,19 @@ class AuthService {
   }
 
   logout() {
-    localStorage.removeItem("user");
+    localStorage.removeItem("user_mob_painal");
   }
 
-  async changePassword(id, data){
+  async changePassword(id, data) {
     try {
-      const response = await axios.post(`${API_URL}/change-password/${id}`, {
-        oldPassword: data.oldPassword,
-        newPassword: data.newPassword,  
-      }, {headers: authHeader()});
+      const response = await axios.post(
+        `${API_URL}/change-password/${id}`,
+        {
+          oldPassword: data.oldPassword,
+          newPassword: data.newPassword,
+        },
+        { headers: authHeader() }
+      );
 
       return response;
     } catch (error) {
@@ -37,20 +41,24 @@ class AuthService {
     }
   }
 
-  async updateProfileUser(id, data){
+  async updateProfileUser(id, data) {
     try {
-      console.log(id)
-      console.log(data)
-      const response = await axios.put(`${API_URL}/update-user-cliente/${id}`, {
-        contacto: data.contacto,
-        username: data.username,
-        email: data.email,
-        telefono: data.telefono,
-        clienteId: data.clienteId
-      }, {headers: authHeader()});
+      console.log(id);
+      console.log(data);
+      const response = await axios.put(
+        `${API_URL}/update-user-cliente/${id}`,
+        {
+          contacto: data.contacto,
+          username: data.username,
+          email: data.email,
+          telefono: data.telefono,
+          clienteId: data.clienteId,
+        },
+        { headers: authHeader() }
+      );
 
       if (response.data.accessToken) {
-        localStorage.setItem("user", JSON.stringify(response.data));
+        localStorage.setItem("user_mob_painal", JSON.stringify(response.data));
 
         return response.data;
       }

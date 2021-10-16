@@ -1,16 +1,22 @@
-export default function calcularEstadisticas(distancia) {
-  const emisionAutomovil = 97.8 / 1000; // 100 gramos de CO2 por cada Km
-  const emisionBicicleta = 8.6 / 1000; // 8.6 gramos de CO2 por cada Km
+import axios from "axios";
+import authHeader from "@/services/auth-header";
 
-  // const velocidadPromedioBicicleta = 15; // 15 Km/h velocidad estimada de un ciclista
-  const velocidadPromedioAutomovil = 40; // 40 Km/h velocidad estimada de los vehículos en la ciudad de Lima
+export default async function calcularEstadisticas(distancia) {
+  try {
+    const {
+      data: { co2, ruido },
+    } = await axios.post(
+      `${process.env.VUE_APP_HERMES}/calcular-estadisticas-ecoamigables`,
+      { distancia },
+      {
+        headers: authHeader(),
+      }
+    );
 
-  const co2 = +(
-    distancia * emisionAutomovil -
-    distancia * emisionBicicleta
-  ).toFixed(1);
-
-  const ruido = +(distancia / velocidadPromedioAutomovil).toFixed(2);
-
-  return { co2, ruido };
+    return { co2, ruido };
+  } catch (error) {
+    console.error(
+      `Error desde el servicio calcular estadisticas ecoamigables: ${error.message}`
+    );
+  }
 }
