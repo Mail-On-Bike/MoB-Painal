@@ -9,6 +9,8 @@
             <div class="form-group">
               <label class="white" for="">Tipo de Envio</label>
               <select
+                disabled
+                readonly
                 @change="changeDistritos($event)"
                 name=""
                 id=""
@@ -44,6 +46,9 @@
                 type="date"
                 class="form-control"
                 v-model="nuevoPedido.fecha"
+                :class="{empty: validar && nuevoPedido.fecha == ''}"
+                :min="fechaMinima"
+                :max="fechaMaxima"
               />
             </div>
           </div>
@@ -145,7 +150,7 @@
                         />
                       </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-8">
                       <div class="form-group">
                         <label for="">Dirección</label>
                         <input
@@ -155,7 +160,24 @@
                             empty:
                               validar && nuevoPedido.direccionRemitente == '',
                           }"
-                          v-model="nuevoPedido.direccionRemitente"
+                          v-model="nuevoPedido.calleDireccionRemitente"
+                          @change="changeDireccionRemitente($event)"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <div class="form-group">
+                        <label for="">Numero</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          v-bind:class="{
+                            empty:
+                              validar && nuevoPedido.direccionRemitente == '',
+                          }"
+                          v-model="nuevoPedido.numeroDireccionRemitente"
+                          @change="changeNumeroDireccionRemitente($event)"
+
                         />
                       </div>
                     </div>
@@ -258,17 +280,19 @@
                         />
                       </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-8">
                       <div class="form-group">
                         <label for="">Dirección</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-bind:class="{
-                            empty:
-                              validar && nuevoPedido.direccionConsignado == '',
-                          }"
-                          v-model="nuevoPedido.direccionConsignado"
+                        <input type="text" class="form-control" :class="{empty: validar && nuevoPedido.direccionConsignado == '',}"
+                          v-model="nuevoPedido.calleDireccionConsignado" @change="changeDireccionConsignado($event)"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <div class="form-group">
+                        <label for="">Numero</label>
+                        <input type="text" class="form-control" :class="{empty: validar && nuevoPedido.direccionConsignado == '',}"
+                          v-model="nuevoPedido.numeroDireccionConsignado" @change="changeNumeroDireccionConsignado($event)"
                         />
                       </div>
                     </div>
@@ -351,6 +375,7 @@
                 <p class="white-seconday">{{ nuevoPedido.modalidad }}</p>
               </div>
             </div>
+            <hr class="white">
             <div class="flex">
               <div class="pr-1 w-65">
                 <h6 class="white">Origen:</h6>
@@ -369,6 +394,7 @@
             </div>
             <h6 class="white">Observaciones en el Origen:</h6>
             <p class="white-seconday">{{ nuevoPedido.otroDatoRemitente }}</p>
+            <hr class="white">
             <div class="flex">
               <div class="pr-1 w-65">
                 <h6 class="white">Destino:</h6>
@@ -387,6 +413,7 @@
             </div>
             <h6 class="white">Observaciones en el Destino:</h6>
             <p class="white-seconday">{{ nuevoPedido.otroDatoConsignado }}</p>
+            <hr class="white">
             <div class="flex">
               <div class="pr-1 w-65">
                 <h6 class="white">Distancia Total:</h6>
@@ -440,6 +467,8 @@ export default {
     const usarMiInfoRemitente = ref(false);
     const usarMiInfoConsignado = ref(false);
     const validar = ref(false);
+    const fechaMinima = ref()
+    const fechaMaxima = ref()
 
     const store = useStore();
     const router = useRouter();
@@ -457,9 +486,12 @@ export default {
       store.dispatch("auxiliares/getTiposEnvios");
       store.dispatch("auxiliares/getTiposCarga");
       store.dispatch("auxiliares/getModalidades");
+      let fecha = new Date()
+      fechaMinima.value = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + (fecha.getDate() + 1)
+      fechaMaxima.value = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + (fecha.getDate() + 2)
+      nuevoPedido.fecha = fechaMinima.value;
     });
-
-    nuevoPedido.fecha = "";
+    
     nuevoPedido.tipoEnvio = clienteData.value.tipoDeEnvio.tipo;
     nuevoPedido.modalidad = "Una vía";
     nuevoPedido.tipoCarga = clienteData.value.tipoDeCarga.tipo;
@@ -473,7 +505,7 @@ export default {
       Swal.fire({
         title: "¡Hey!",
         text:
-          'Te recordamos que hay algunos distritos que nos los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
+          'Te recordamos que algunos distritos no los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
         icon: "info",
         confirmButtonText: "OK",
       });
@@ -484,14 +516,18 @@ export default {
     nuevoPedido.empresaRemitente = clienteData.value.razonComercial;
     nuevoPedido.contactoRemitente = "";
     nuevoPedido.telefonoRemitente = "";
-    nuevoPedido.direccionRemitente = "";
+    nuevoPedido['calleDireccionRemitente'] = "";
+    nuevoPedido['numeroDireccionRemitente'] = "";
+    nuevoPedido.direccionRemitente = nuevoPedido.calleDireccionRemitente + ' ' + nuevoPedido.numeroDireccionRemitente;
     nuevoPedido.distritoRemitente = "";
     nuevoPedido.otroDatoRemitente = "";
 
     nuevoPedido.empresaConsignado = "";
     nuevoPedido.contactoConsignado = "";
     nuevoPedido.telefonoConsignado = "";
-    nuevoPedido.direccionConsignado = "";
+    nuevoPedido['calleDireccionConsignado'] = "";
+    nuevoPedido['numeroDireccionConsignado'] = "";
+    nuevoPedido.direccionConsignado = nuevoPedido.calleDireccionConsignado + ' ' + nuevoPedido.numeroDireccionConsignado;
     nuevoPedido.distritoConsignado = "";
     nuevoPedido.otroDatoConsignado = "";
 
@@ -537,6 +573,7 @@ export default {
 
     const validarForm = () => {
       if (
+        nuevoPedido.fecha == "" ||
         nuevoPedido.contactoRemitente == "" ||
         nuevoPedido.telefonoRemitente == "" ||
         nuevoPedido.direccionRemitente == "" ||
@@ -552,6 +589,20 @@ export default {
       }
     };
 
+    const changeDireccionRemitente = (e) => {
+      nuevoPedido.direccionRemitente = e.target.value + ' ' + nuevoPedido.numeroDireccionRemitente;
+    }
+    const changeNumeroDireccionRemitente = (e) => {
+      nuevoPedido.direccionRemitente = nuevoPedido.calleDireccionRemitente + ' ' + e.target.value;
+    }
+
+    const changeDireccionConsignado = (e) => {
+      nuevoPedido.direccionConsignado = e.target.value + ' ' + nuevoPedido.numeroDireccionConsignado;
+    }
+    const changeNumeroDireccionConsignado = (e) => {
+      nuevoPedido.direccionConsignado = nuevoPedido.calleDireccionConsignado + ' ' + e.target.value;
+    }
+
     const calcularDistancia = async () => {
       try {
         nuevoPedido.distancia = await consultarApi(
@@ -560,6 +611,17 @@ export default {
           nuevoPedido.direccionConsignado,
           nuevoPedido.distritoConsignado
         );
+
+        if(typeof nuevoPedido.distancia === 'undefined' || nuevoPedido.distancia === null){
+          Swal.fire({
+            title: "Oops!",
+            text: "Ocurrió un error inténtalo mas tarde",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+          continuar.value = true;
+          return;
+        }
 
         const response = await calcularTarifa(
           nuevoPedido.distancia,
@@ -612,11 +674,13 @@ export default {
       if (usarMiInfoRemitente.value) {
         nuevoPedido.contactoRemitente = clienteData.value.contacto;
         nuevoPedido.direccionRemitente = clienteData.value.direccion;
+        nuevoPedido.calleDireccionRemitente = clienteData.value.direccion;
         nuevoPedido.distritoRemitente = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoRemitente = clienteData.value.telefono;
       } else {
         nuevoPedido.contactoRemitente = "";
         nuevoPedido.direccionRemitente = "";
+        nuevoPedido.calleDireccionRemitente = "";
         nuevoPedido.distritoRemitente = "";
         nuevoPedido.telefonoRemitente = "";
       }
@@ -626,12 +690,14 @@ export default {
       if (usarMiInfoConsignado.value) {
         nuevoPedido.contactoConsignado = clienteData.value.contacto;
         nuevoPedido.direccionConsignado = clienteData.value.direccion;
+        nuevoPedido.calleDireccionConsignado = clienteData.value.direccion;
         nuevoPedido.distritoConsignado = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoConsignado = clienteData.value.telefono;
         nuevoPedido.empresaConsignado = clienteData.value.razonComercial;
       } else {
         nuevoPedido.contactoConsignado = "";
         nuevoPedido.direccionConsignado = "";
+        nuevoPedido.calleDireccionConsignado = ""
         nuevoPedido.distritoConsignado = "";
         nuevoPedido.telefonoConsignado = "";
         nuevoPedido.empresaConsignado = "";
@@ -661,6 +727,12 @@ export default {
       usarMiInfoConsignado,
       validar,
       home,
+      fechaMinima,
+      fechaMaxima,
+      changeDireccionRemitente,
+      changeNumeroDireccionRemitente,
+      changeDireccionConsignado,
+      changeNumeroDireccionConsignado
     };
   },
 };
