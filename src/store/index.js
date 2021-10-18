@@ -3,7 +3,10 @@ import { auxiliares } from "./auxiliares.module";
 // Auth Controllers
 import AuthService from "../services/auth.service";
 
-if (!localStorage.getItem("user_mob_painal").startsWith("{"))
+if (
+  localStorage.getItem("user_mob_painal") &&
+  !localStorage.getItem("user_mob_painal").startsWith("{")
+)
   localStorage.clear();
 
 const initialState = JSON.parse(localStorage.getItem("user_mob_painal"));
