@@ -481,11 +481,6 @@ export default {
     const clienteData = computed(() => store.getters.clienteData);
 
     onMounted(() => {
-      store.dispatch("auxiliares/getDistritosLima");
-      store.dispatch("auxiliares/getZonaCobertura");
-      store.dispatch("auxiliares/getTiposEnvios");
-      store.dispatch("auxiliares/getTiposCarga");
-      store.dispatch("auxiliares/getModalidades");
       let fecha = new Date()
       fechaMinima.value = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + (fecha.getDate() + 1)
       fechaMaxima.value = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + (fecha.getDate() + 2)

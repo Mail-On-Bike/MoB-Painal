@@ -54,6 +54,11 @@ export default {
             let response = await store.dispatch("login", user);
             if(response){
                 if(response.accesToken != ""){
+                    store.dispatch("auxiliares/getDistritosLima");
+                    store.dispatch("auxiliares/getZonaCobertura");
+                    store.dispatch("auxiliares/getTiposEnvios");
+                    store.dispatch("auxiliares/getTiposCarga");
+                    store.dispatch("auxiliares/getModalidades");
                     router.push("/");
                     Swal.fire({
                         title: 'Loggeado!',
