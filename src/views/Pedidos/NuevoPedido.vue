@@ -659,7 +659,8 @@ export default {
           nuevoPedido.distancia,
           nuevoPedido.tipoEnvio,
           nuevoPedido.modalidad,
-          nuevoPedido.distritoConsignado
+          nuevoPedido.distritoConsignado,
+          nuevoPedido.empresaRemitente
         );
 
         nuevoPedido.tarifa = response.tarifa;
