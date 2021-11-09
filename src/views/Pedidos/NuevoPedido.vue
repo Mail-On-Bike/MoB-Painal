@@ -39,23 +39,6 @@
               </select>
             </div>
           </div>
-          <div class="col-12">
-            <div class="form-group">
-              <label class="white" for="">Formas de Pago</label>
-              <select
-                class="form-select"
-                name=""
-                id=""
-                v-model="nuevoPedido.formaPago"
-              >
-                <option
-                  v-for="formaDePago in formasDePago"
-                  :key="formaDePago.id"
-                  >{{ formaDePago.pago }}</option
-                >
-              </select>
-            </div>
-          </div>
           <div class="col-6">
             <div class="form-group">
               <label class="white" for="">Fecha de Envío</label>
@@ -510,24 +493,15 @@ export default {
     const modalidades = computed(() => store.state.auxiliares.modalidades);
     const tiposDeEnvio = computed(() => store.state.auxiliares.tiposDeEnvio);
     const clienteData = computed(() => store.getters.clienteData);
-    //const formasDePago = computed(() => store.state.auxiliares.formasDePago);
-    let formasDePago = ref([
-      {id: 5, pago: 'Efectivo en Origen'},
-      {id: 6, pago: 'Efectivo en Destino'},
-      {id: 7, pago: 'Transferencia'},
-    ])
-    
+
     onMounted(() => {
       let fecha = new Date();
-      let year =fecha.getFullYear();
-      let month = fecha.getMonth() + 1;
-      let date = fecha.getDate() < 10 ? '0' + fecha.getDate() : fecha.getDate();
-      if (fecha.getHours() < 14){
-        fechaMinima.value = year + "-" + month + "-" + date;
-      } else{
-        fechaMinima.value = year + "-" + month + "-" + (date + 1);
-      }
-      
+      fechaMinima.value =
+        fecha.getFullYear() +
+        "-" +
+        (fecha.getMonth() + 1) +
+        "-" +
+        (fecha.getDate() + 1);
       fechaMaxima.value =
         fecha.getFullYear() +
         "-" +
@@ -541,13 +515,7 @@ export default {
     nuevoPedido.modalidad = "Una vía";
     nuevoPedido.tipoCarga = clienteData.value.tipoDeCarga.tipo;
     nuevoPedido.tipoEnvio = clienteData.value.tipoDeEnvio.tipo;
-    for (let i = 0; i < formasDePago.value.length; i++){
-      if(!formasDePago.value[i].pago === clienteData.value.formaDePago.pago){
-        formasDePago.value.push(clienteData.value.formaDePago)
-      }
-    }
     nuevoPedido.formaPago = clienteData.value.formaDePago.pago;
-    
     nuevoPedido.rolCliente = clienteData.value.rolCliente.rol;
     nuevoPedido.operador = store.getters.operador;
 
@@ -612,9 +580,9 @@ export default {
       if (validarForm()) {
         validar.value = true;
         Swal.fire({
-          title: "Heey!",
+          title: "Oops!",
           text: "Tienes algunos campos vacíos",
-          icon: "warning",
+          icon: "error",
           confirmButtonText: "OK",
         });
       } else {
@@ -679,7 +647,7 @@ export default {
         ) {
           Swal.fire({
             title: "Oops!",
-            text: "Ocurrió un error al calcular la distancia, verifica que las direcciones y distritos sean los correctos",
+            text: "Ocurrió un error inténtalo mas tarde",
             icon: "error",
             confirmButtonText: "OK",
           });
@@ -727,34 +695,13 @@ export default {
         const response = await PedidoService.storageNuevoPedido(nuevoPedido);
 
         if (response.status === 200) {
-          if(nuevoPedido.distritoConsignado.includes('*') || nuevoPedido.distritoRemitente.includes('*')){
-            Swal.fire({
-              title: 'Distrito con restricciones',
-              text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
-              icon: 'info',
-              showCancelButton: false,
-              confirmButtonText: '¡Entendido!'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                Swal.fire({
-                  title: "¡Genial!",
-                  text: response.data.message,
-                  icon: "success",
-                  confirmButtonText: "OK",
-                  timer: 2000,
-                })
-              }
-            })
-          }else{
-            Swal.fire({
-              title: "¡Genial!",
-              text: response.data.message,
-              icon: "success",
-              confirmButtonText: "OK",
-              timer: 2000,
-            });
-          }
-          
+          Swal.fire({
+            title: "¡Genial!",
+            text: response.data.message,
+            icon: "success",
+            confirmButtonText: "OK",
+            timer: 2000,
+          });
           router.push("/misPedidos");
         }
       } catch (error) {
@@ -813,7 +760,6 @@ export default {
       distritos,
       tiposDeEnvio,
       tiposDeCarga,
-      formasDePago,
       modalidades,
       clienteData,
       usarMiInfoRemitente,

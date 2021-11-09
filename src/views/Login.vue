@@ -59,7 +59,6 @@ export default {
                     store.dispatch("auxiliares/getTiposEnvios");
                     store.dispatch("auxiliares/getTiposCarga");
                     store.dispatch("auxiliares/getModalidades");
-                    store.dispatch("auxiliares/getFormasPago");
                     router.push("/");
                     Swal.fire({
                         title: 'Loggeado!',
