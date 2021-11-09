@@ -612,9 +612,9 @@ export default {
       if (validarForm()) {
         validar.value = true;
         Swal.fire({
-          title: "Oops!",
+          title: "Heey!",
           text: "Tienes algunos campos vacíos",
-          icon: "error",
+          icon: "warning",
           confirmButtonText: "OK",
         });
       } else {
@@ -679,7 +679,7 @@ export default {
         ) {
           Swal.fire({
             title: "Oops!",
-            text: "Ocurrió un error inténtalo mas tarde",
+            text: "Ocurrió un error al calcular la distancia, verifica que las direcciones y distritos sean los correctos",
             icon: "error",
             confirmButtonText: "OK",
           });
