@@ -9,31 +9,31 @@
 					</div>
 					<div class="modal-body">
 						<div class="row">
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="">Nombre de Contacto</label>
-                                    <input type="text" class="form-control" v-model="userProfileUpdated.contacto">
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="">Username</label>
-                                    <input type="text" class="form-control" v-model="userProfileUpdated.username">
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="">Email</label>
-                                    <input type="text" class="form-control" v-model="userProfileUpdated.email">
-                                </div>
-                            </div>
-														<div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="">Telefono</label>
-                                    <input type="text" class="form-control" v-model="userProfileUpdated.telefono">
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Nombre de Contacto</label>
+                        <input type="text" class="form-control" v-model="userProfileUpdated.contacto">
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Username</label>
+                        <input type="text" class="form-control" v-model="userProfileUpdated.username">
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Email</label>
+                        <input type="text" class="form-control" v-model="userProfileUpdated.email">
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Telefono</label>
+                        <input type="text" class="form-control" v-model="userProfileUpdated.telefono">
+                    </div>
+                </div>
+            </div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-danger" @click="closeModal">Cancelar</button>
@@ -58,8 +58,6 @@ export default {
 			email: props.userProfile.email,
       telefono: props.userProfile.telefono
     })
-
-		console.log(props.userProfile)
 
 		const updateProfile = () => {
 			emit("updateProfile", userProfileUpdated)
