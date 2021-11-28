@@ -519,23 +519,44 @@ export default {
     
     onMounted(() => {
       let fecha = new Date();
+      fecha.setDate(fecha.getDate() + 2)
       let year =fecha.getFullYear();
       let month = fecha.getMonth() + 1;
       let date = fecha.getDate() < 10 ? '0' + fecha.getDate() : fecha.getDate();
       if (fecha.getHours() < 14){
         fechaMinima.value = year + "-" + month + "-" + date;
+        if(esDomingo(fechaMinima.value)){
+          fecha.setDate(fecha.getDate()+1)
+          fechaMinima.value = formatDate(fecha)
+        }
       } else{
         fechaMinima.value = year + "-" + month + "-" + (date + 1);
-      }
-      
-      fechaMaxima.value =
-        fecha.getFullYear() +
-        "-" +
-        (fecha.getMonth() + 1) +
-        "-" +
-        (fecha.getDate() + 2);
+        if(esDomingo(fechaMinima.value)){
+          fecha.setDate(fecha.getDate()+1)
+          fechaMinima.value = formatDate(fecha)
+        }
+      } 
+      fechaMaxima.value = formatDate(fecha.setDate(fecha.getDate() + 2));
+
       nuevoPedido.fecha = fechaMinima.value;
     });
+
+    const esDomingo = (date) => {
+      let newDate = new Date(date);
+      if(newDate.getDay() === 6){
+        return true;
+      }
+      return false;
+    }
+
+    const formatDate = (value) => {
+      let fecha = new Date(value);
+      let year = fecha.getFullYear();
+      let month = fecha.getMonth() + 1;
+      let date = fecha.getDate() < 10 ? '0' + fecha.getDate() : fecha.getDate();
+
+      return year + "-" + month + "-" + date;
+    }
 
     nuevoPedido.tipoEnvio = clienteData.value.tipoDeEnvio.tipo;
     nuevoPedido.modalidad = "Una vía";
@@ -618,8 +639,17 @@ export default {
           confirmButtonText: "OK",
         });
       } else {
-        continuar.value = false;
-        calcularDistancia();
+        if(esDomingo(nuevoPedido.fecha)){
+          Swal.fire({
+            title: "Heey!",
+            text: "No se puede solicitar un envio en Domingo",
+            icon: "warning",
+            confirmButtonText: "OK",
+          });
+        }else{
+          continuar.value = false;
+          calcularDistancia();
+        }
       }
     };
 
@@ -711,54 +741,64 @@ export default {
     };
 
     const handleAnadirPedido = async () => {
-      try {
-        nuevoPedido.mobiker = "Asignar MoBiker";
-        nuevoPedido.status = 1;
-        nuevoPedido.recaudo = 0;
-        nuevoPedido.tramite = 0;
+      if(esDomingo(nuevoPedido.fecha)){
+        Swal.fire({
+          title: "¡Oops!",
+          text: 'No se pueden solicitar envios en Domingo',
+          icon: "warning",
+          confirmButtonText: "OK",
+          timer: 2000,
+        });
+      }else{
+        try {
+          nuevoPedido.mobiker = "Asignar MoBiker";
+          nuevoPedido.status = 1;
+          nuevoPedido.recaudo = 0;
+          nuevoPedido.tramite = 0;
 
-        const comision = await calcularComision(
-          nuevoPedido.mobiker,
-          nuevoPedido.tipoEnvio
-        );
+          const comision = await calcularComision(
+            nuevoPedido.mobiker,
+            nuevoPedido.tipoEnvio
+          );
 
-        nuevoPedido.comision = nuevoPedido.tarifa * comision;
+          nuevoPedido.comision = nuevoPedido.tarifa * comision;
 
-        const response = await PedidoService.storageNuevoPedido(nuevoPedido);
+          const response = await PedidoService.storageNuevoPedido(nuevoPedido);
 
-        if (response.status === 200) {
-          if(nuevoPedido.distritoConsignado.includes('*') || nuevoPedido.distritoRemitente.includes('*')){
-            Swal.fire({
-              title: 'Distrito con restricciones',
-              text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
-              icon: 'info',
-              showCancelButton: false,
-              confirmButtonText: '¡Entendido!'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                Swal.fire({
-                  title: "¡Genial!",
-                  text: response.data.message,
-                  icon: "success",
-                  confirmButtonText: "OK",
-                  timer: 2000,
-                })
-              }
-            })
-          }else{
-            Swal.fire({
-              title: "¡Genial!",
-              text: response.data.message,
-              icon: "success",
-              confirmButtonText: "OK",
-              timer: 2000,
-            });
+          if (response.status === 200) {
+            if(nuevoPedido.distritoConsignado.includes('*') || nuevoPedido.distritoRemitente.includes('*')){
+              Swal.fire({
+                title: 'Distrito con restricciones',
+                text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonText: '¡Entendido!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Swal.fire({
+                    title: "¡Genial!",
+                    text: response.data.message,
+                    icon: "success",
+                    confirmButtonText: "OK",
+                    timer: 2000,
+                  })
+                }
+              })
+            }else{
+              Swal.fire({
+                title: "¡Genial!",
+                text: response.data.message,
+                icon: "success",
+                confirmButtonText: "OK",
+                timer: 2000,
+              });
+            }
+            
+            router.push("/misPedidos");
           }
-          
-          router.push("/misPedidos");
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
     };
 
@@ -769,6 +809,7 @@ export default {
         nuevoPedido.calleDireccionRemitente = clienteData.value.direccion;
         nuevoPedido.distritoRemitente = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoRemitente = clienteData.value.telefono;
+        nuevoPedido.otroDatoRemitente = clienteData.value.otroDato;
       } else {
         nuevoPedido.contactoRemitente = "";
         nuevoPedido.direccionRemitente = "";
@@ -786,6 +827,7 @@ export default {
         nuevoPedido.distritoConsignado = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoConsignado = clienteData.value.telefono;
         nuevoPedido.empresaConsignado = clienteData.value.razonComercial;
+        nuevoPedido.otroDatoConsignado = clienteData.value.otroDato;
       } else {
         nuevoPedido.contactoConsignado = "";
         nuevoPedido.direccionConsignado = "";
