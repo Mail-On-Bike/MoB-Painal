@@ -519,7 +519,6 @@ export default {
     
     onMounted(() => {
       let fecha = new Date();
-      fecha.setDate(fecha.getDate() + 2)
       let year =fecha.getFullYear();
       let month = fecha.getMonth() + 1;
       let date = fecha.getDate() < 10 ? '0' + fecha.getDate() : fecha.getDate();
