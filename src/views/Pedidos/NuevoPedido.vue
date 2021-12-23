@@ -546,7 +546,6 @@ export default {
 
     const getMaxHour = () => {
       const hoy = new Date().toISOString().split("T")[0];
-      console.log(hoy);
       if (beforeHolidays.includes(hoy)) return 21;
 
       return 14;
