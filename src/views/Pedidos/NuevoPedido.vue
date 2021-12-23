@@ -603,7 +603,7 @@ export default {
         Swal.fire({
           title: "¡Hey!",
           text:
-            "Te recordamos que no laboraremos los días 24, 25, 26 y 31 de diciembre y 1 y 2 de enero",
+            "Te recordamos que no laboraremos los días 25 y 26 de diciembre, ni 1 y 2 de enero. Los días 24 y 31 de diciembre no se podrán programar pedidos para el mismo día.",
           icon: "warning",
           confirmButtonText: "OK",
         });
