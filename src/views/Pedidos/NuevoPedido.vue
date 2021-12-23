@@ -66,6 +66,7 @@
                 :class="{ empty: validar && nuevoPedido.fecha == '' }"
                 :min="fechaMinima"
                 :max="fechaMaxima"
+                @change="validateHolidays($event.target.value)"
               />
             </div>
           </div>
@@ -463,8 +464,22 @@
             <button class="btn btn-danger" @click="home">Cancelar</button>
           </div>
           <div class="col-6">
-            <button class="btn btn-accept" @click="handleAnadirPedido">
-              Confirmar
+            <button
+              class="btn btn-accept"
+              style="min-width: 100px;"
+              @click="handleAnadirPedido"
+              :disabled="saving"
+            >
+              <div
+                v-if="saving"
+                class="spinner-border text-light"
+                role="status"
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <span v-else>
+                Confirmar
+              </span>
             </button>
           </div>
         </div>
@@ -500,6 +515,7 @@ export default {
     const validar = ref(false);
     const fechaMinima = ref();
     const fechaMaxima = ref();
+    const saving = ref(false);
 
     const store = useStore();
     const router = useRouter();
@@ -517,6 +533,15 @@ export default {
       { id: 7, pago: "Transferencia" },
     ]);
 
+    const holidays = [
+      "2021-12-24",
+      "2021-12-25",
+      "2021-12-26",
+      "2021-12-31",
+      "2022-01-01",
+      "2022-01-02",
+    ];
+
     onMounted(() => {
       let fecha = new Date();
       let year = fecha.getFullYear();
@@ -524,18 +549,67 @@ export default {
       let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
       if (fecha.getHours() < 14) {
         fechaMinima.value = year + "-" + month + "-" + date;
+        if (esDomingo(fechaMinima.value)) {
+          fecha.setDate(fecha.getDate() + 1);
+          fechaMinima.value = formatDate(fecha);
+        }
       } else {
         fechaMinima.value = year + "-" + month + "-" + (date + 1);
+        if (esDomingo(fechaMinima.value)) {
+          fecha.setDate(fecha.getDate() + 1);
+          fechaMinima.value = formatDate(fecha);
+        }
       }
-
-      fechaMaxima.value =
-        fecha.getFullYear() +
-        "-" +
-        (fecha.getMonth() + 1) +
-        "-" +
-        (fecha.getDate() + 2);
+      fechaMaxima.value = formatDate(fecha.setDate(fecha.getDate() + 2));
+      while (holidays.includes(String(fechaMaxima.value))) {
+        let temp = new Date(
+          fechaMaxima.value.split("-")[0],
+          parseInt(fechaMaxima.value.split("-")[1]) - 1,
+          fechaMaxima.value.split("-")[2]
+        );
+        fechaMaxima.value = formatDate(temp.setDate(temp.getDate() + 1));
+      }
       nuevoPedido.fecha = fechaMinima.value;
+      while (holidays.includes(String(nuevoPedido.fecha))) {
+        let temp = new Date(
+          nuevoPedido.fecha.split("-")[0],
+          parseInt(nuevoPedido.fecha.split("-")[1]) - 1,
+          nuevoPedido.fecha.split("-")[2]
+        );
+        nuevoPedido.fecha = formatDate(temp.setDate(temp.getDate() + 1));
+      }
     });
+
+    const esDomingo = (date) => {
+      let newDate = new Date(date);
+      if (newDate.getDay() === 6) {
+        return true;
+      }
+      return false;
+    };
+
+    const validateHolidays = (date) => {
+      if (holidays.includes(String(date))) {
+        Swal.fire({
+          title: "¡Hey!",
+          text:
+            "Te recordamos que no laboraremos los días 24, 25, 26 y 31 de diciembre y 1 y 2 de enero",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return false;
+      }
+      return true;
+    };
+
+    const formatDate = (value) => {
+      let fecha = new Date(value);
+      let year = fecha.getFullYear();
+      let month = fecha.getMonth() + 1;
+      let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
+
+      return year + "-" + month + "-" + date;
+    };
 
     nuevoPedido.tipoEnvio = clienteData.value.tipoDeEnvio.tipo;
     nuevoPedido.modalidad = "Una vía";
@@ -618,8 +692,19 @@ export default {
           confirmButtonText: "OK",
         });
       } else {
-        continuar.value = false;
-        calcularDistancia();
+        if (validateHolidays(nuevoPedido.fecha)) {
+          if (esDomingo(nuevoPedido.fecha)) {
+            Swal.fire({
+              title: "Heey!",
+              text: "No se puede solicitar un envio en Domingo",
+              icon: "warning",
+              confirmButtonText: "OK",
+            });
+          } else {
+            continuar.value = false;
+            calcularDistancia();
+          }
+        }
       }
     };
 
@@ -666,6 +751,7 @@ export default {
 
     const calcularDistancia = async () => {
       try {
+        saving.value = true;
         nuevoPedido.distancia = await consultarApi(
           nuevoPedido.direccionRemitente,
           nuevoPedido.distritoRemitente,
@@ -708,39 +794,64 @@ export default {
         return nuevoPedido.distancia;
       } catch (error) {
         console.error("Mensaje de error: ", error.message);
+      } finally {
+        saving.value = false;
       }
     };
 
     const handleAnadirPedido = async () => {
-      try {
-        nuevoPedido.mobiker = "Asignar MoBiker";
-        nuevoPedido.status = 1;
-        nuevoPedido.recaudo = 0;
-        nuevoPedido.tramite = 0;
+      if (validateHolidays(nuevoPedido.fecha)) {
+        if (esDomingo(nuevoPedido.fecha)) {
+          Swal.fire({
+            title: "¡Oops!",
+            text: "No se pueden solicitar envios en Domingo",
+            icon: "warning",
+            confirmButtonText: "OK",
+            timer: 2000,
+          });
+        } else {
+          try {
+            saving.value = true;
+            nuevoPedido.mobiker = "Asignar MoBiker";
+            nuevoPedido.status = 1;
+            nuevoPedido.recaudo = 0;
+            nuevoPedido.tramite = 0;
 
-        const comision = await calcularComision(
-          nuevoPedido.mobiker,
-          nuevoPedido.tipoEnvio
-        );
+            const comision = await calcularComision(
+              nuevoPedido.mobiker,
+              nuevoPedido.tipoEnvio
+            );
 
-        nuevoPedido.comision = nuevoPedido.tarifa * comision;
+            nuevoPedido.comision = nuevoPedido.tarifa * comision;
 
-        const response = await PedidoService.storageNuevoPedido(nuevoPedido);
+            const response = await PedidoService.storageNuevoPedido(
+              nuevoPedido
+            );
 
-        if (response.status === 200) {
-          if (
-            nuevoPedido.distritoConsignado.includes("*") ||
-            nuevoPedido.distritoRemitente.includes("*")
-          ) {
-            Swal.fire({
-              title: "Distrito con restricciones",
-              text:
-                "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
-              icon: "info",
-              showCancelButton: false,
-              confirmButtonText: "¡Entendido!",
-            }).then((result) => {
-              if (result.isConfirmed) {
+            if (response.status === 200) {
+              if (
+                nuevoPedido.distritoConsignado.includes("*") ||
+                nuevoPedido.distritoRemitente.includes("*")
+              ) {
+                Swal.fire({
+                  title: "Distrito con restricciones",
+                  text:
+                    "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
+                  icon: "info",
+                  showCancelButton: false,
+                  confirmButtonText: "¡Entendido!",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    Swal.fire({
+                      title: "¡Genial!",
+                      text: response.data.message,
+                      icon: "success",
+                      confirmButtonText: "OK",
+                      timer: 2000,
+                    });
+                  }
+                });
+              } else {
                 Swal.fire({
                   title: "¡Genial!",
                   text: response.data.message,
@@ -749,21 +860,15 @@ export default {
                   timer: 2000,
                 });
               }
-            });
-          } else {
-            Swal.fire({
-              title: "¡Genial!",
-              text: response.data.message,
-              icon: "success",
-              confirmButtonText: "OK",
-              timer: 2000,
-            });
-          }
 
-          router.push("/misPedidos");
+              router.push("/misPedidos");
+            }
+          } catch (error) {
+            console.error(error);
+          } finally {
+            saving.value = false;
+          }
         }
-      } catch (error) {
-        console.log(error);
       }
     };
 
@@ -831,6 +936,8 @@ export default {
       changeNumeroDireccionRemitente,
       changeDireccionConsignado,
       changeNumeroDireccionConsignado,
+      validateHolidays,
+      saving,
     };
   },
 };
