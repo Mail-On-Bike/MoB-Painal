@@ -542,12 +542,23 @@ export default {
       "2022-01-02",
     ];
 
+    const beforeHolidays = ["2021-12-23", "2021-12-30"];
+
+    const getMaxHour = () => {
+      const hoy = new Date().toISOString().split("T")[0];
+      console.log(hoy);
+      if (beforeHolidays.includes(hoy)) return 21;
+
+      return 14;
+    };
+
     onMounted(() => {
       let fecha = new Date();
       let year = fecha.getFullYear();
       let month = fecha.getMonth() + 1;
       let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
-      if (fecha.getHours() < 14) {
+      // if (fecha.getHours() < 14) {
+      if (fecha.getHours() < getMaxHour()) {
         fechaMinima.value = year + "-" + month + "-" + date;
         if (esDomingo(fechaMinima.value)) {
           fecha.setDate(fecha.getDate() + 1);
