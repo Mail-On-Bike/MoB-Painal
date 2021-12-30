@@ -599,7 +599,8 @@ export default {
     };
 
     const validateHolidays = (date) => {
-      if (holidays.includes(String(date))) {
+      const hoy = new Date().toISOString().split("T")[0];
+      if (holidays.includes(String(date)) && !beforeHolidays.includes(hoy)) {
         Swal.fire({
           title: "¡Hey!",
           text:
