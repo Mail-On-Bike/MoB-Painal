@@ -168,7 +168,7 @@
                         />
                       </div>
                     </div>
-                    <div class="col-8">
+                    <div class="col-12">
                       <div class="form-group">
                         <label for="">Dirección</label>
                         <input
@@ -178,12 +178,11 @@
                             empty:
                               validar && nuevoPedido.direccionRemitente == '',
                           }"
-                          v-model="nuevoPedido.calleDireccionRemitente"
-                          @change="changeDireccionRemitente($event)"
+                          v-model="nuevoPedido.direccionRemitente"
                         />
                       </div>
                     </div>
-                    <div class="col-4">
+                    <!-- <div class="col-4">
                       <div class="form-group">
                         <label for="">Numero</label>
                         <input
@@ -197,7 +196,7 @@
                           @change="changeNumeroDireccionRemitente($event)"
                         />
                       </div>
-                    </div>
+                    </div> -->
                     <div class="col-12">
                       <div class="form-group">
                         <label for="">Distrito</label>
@@ -307,12 +306,11 @@
                             empty:
                               validar && nuevoPedido.direccionConsignado == '',
                           }"
-                          v-model="nuevoPedido.calleDireccionConsignado"
-                          @change="changeDireccionConsignado($event)"
+                          v-model="nuevoPedido.direccionConsignado"
                         />
                       </div>
                     </div>
-                    <div class="col-4">
+                    <!-- <div class="col-4">
                       <div class="form-group">
                         <label for="">Numero</label>
                         <input
@@ -326,7 +324,7 @@
                           @change="changeNumeroDireccionConsignado($event)"
                         />
                       </div>
-                    </div>
+                    </div> -->
                     <div class="col-12">
                       <div class="form-group">
                         <label for="">Distrito</label>
@@ -599,7 +597,8 @@ export default {
     };
 
     const validateHolidays = (date) => {
-      if (holidays.includes(String(date))) {
+      const hoy = new Date().toISOString().split("T")[0];
+      if (holidays.includes(String(date)) && !beforeHolidays.includes(hoy)) {
         Swal.fire({
           title: "¡Hey!",
           text:
@@ -651,24 +650,14 @@ export default {
     nuevoPedido.empresaRemitente = clienteData.value.razonComercial;
     nuevoPedido.contactoRemitente = "";
     nuevoPedido.telefonoRemitente = "";
-    nuevoPedido["calleDireccionRemitente"] = "";
-    nuevoPedido["numeroDireccionRemitente"] = "";
-    nuevoPedido.direccionRemitente =
-      nuevoPedido.calleDireccionRemitente +
-      " " +
-      nuevoPedido.numeroDireccionRemitente;
+    nuevoPedido.direccionRemitente = "";
     nuevoPedido.distritoRemitente = "";
     nuevoPedido.otroDatoRemitente = "";
 
     nuevoPedido.empresaConsignado = "";
     nuevoPedido.contactoConsignado = "";
     nuevoPedido.telefonoConsignado = "";
-    nuevoPedido["calleDireccionConsignado"] = "";
-    nuevoPedido["numeroDireccionConsignado"] = "";
-    nuevoPedido.direccionConsignado =
-      nuevoPedido.calleDireccionConsignado +
-      " " +
-      nuevoPedido.numeroDireccionConsignado;
+    nuevoPedido.direccionConsignado = "";
     nuevoPedido.distritoConsignado = "";
     nuevoPedido.otroDatoConsignado = "";
 
@@ -741,23 +730,10 @@ export default {
       }
     };
 
-    const changeDireccionRemitente = (e) => {
-      nuevoPedido.direccionRemitente =
-        e.target.value + " " + nuevoPedido.numeroDireccionRemitente;
-    };
-    const changeNumeroDireccionRemitente = (e) => {
-      nuevoPedido.direccionRemitente =
-        nuevoPedido.calleDireccionRemitente + " " + e.target.value;
-    };
-
-    const changeDireccionConsignado = (e) => {
-      nuevoPedido.direccionConsignado =
-        e.target.value + " " + nuevoPedido.numeroDireccionConsignado;
-    };
-    const changeNumeroDireccionConsignado = (e) => {
-      nuevoPedido.direccionConsignado =
-        nuevoPedido.calleDireccionConsignado + " " + e.target.value;
-    };
+    // const changeNumeroDireccionRemitente = (e) => {
+    //   nuevoPedido.direccionRemitente =
+    //     nuevoPedido.calleDireccionRemitente + " " + e.target.value;
+    // };
 
     const calcularDistancia = async () => {
       try {
@@ -886,15 +862,14 @@ export default {
       if (usarMiInfoRemitente.value) {
         nuevoPedido.contactoRemitente = clienteData.value.contacto;
         nuevoPedido.direccionRemitente = clienteData.value.direccion;
-        nuevoPedido.calleDireccionRemitente = clienteData.value.direccion;
         nuevoPedido.distritoRemitente = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoRemitente = clienteData.value.telefono;
       } else {
         nuevoPedido.contactoRemitente = "";
         nuevoPedido.direccionRemitente = "";
-        nuevoPedido.calleDireccionRemitente = "";
         nuevoPedido.distritoRemitente = "";
         nuevoPedido.telefonoRemitente = "";
+        nuevoPedido.otroDatoRemitente = "";
       }
     };
 
@@ -902,17 +877,17 @@ export default {
       if (usarMiInfoConsignado.value) {
         nuevoPedido.contactoConsignado = clienteData.value.contacto;
         nuevoPedido.direccionConsignado = clienteData.value.direccion;
-        nuevoPedido.calleDireccionConsignado = clienteData.value.direccion;
         nuevoPedido.distritoConsignado = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoConsignado = clienteData.value.telefono;
         nuevoPedido.empresaConsignado = clienteData.value.razonComercial;
       } else {
         nuevoPedido.contactoConsignado = "";
         nuevoPedido.direccionConsignado = "";
-        nuevoPedido.calleDireccionConsignado = "";
         nuevoPedido.distritoConsignado = "";
         nuevoPedido.telefonoConsignado = "";
         nuevoPedido.empresaConsignado = "";
+        nuevoPedido.otroDatoConsignado = "";
+
       }
     };
 
@@ -942,10 +917,6 @@ export default {
       home,
       fechaMinima,
       fechaMaxima,
-      changeDireccionRemitente,
-      changeNumeroDireccionRemitente,
-      changeDireccionConsignado,
-      changeNumeroDireccionConsignado,
       validateHolidays,
       saving,
     };
