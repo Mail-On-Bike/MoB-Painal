@@ -24,6 +24,13 @@
     font-weight: 500;
 }
 
+.fw-700{
+    font-weight: 700;
+}
+.fw-600{
+    font-weight: 600;
+}
+
 .btn-sm{
     padding: 2px 10px;
     min-height: 30px !important;
@@ -361,3 +368,39 @@
     }
 }
 
+.pedido-card{
+	width: 100%;
+	min-height: 100px;
+	border-radius: 5px;
+	border: 2px solid #eee;
+    background-color: white;
+	color: black !important;
+	margin-bottom: 15px;
+	display: flex;
+    cursor: pointer;
+    transition: .4s;
+    &:hover{
+        box-shadow: 0px 5px 10px 2px rgba(0,0,0,0.25);
+        -webkit-box-shadow: 0px 5px 10px 2px rgba(0,0,0,0.25);
+        -moz-box-shadow: 0px 5px 10px 2px rgba(0,0,0,0.25);
+    }
+}
+
+.fc_programado{
+    color: $programado;
+}
+.fc_por_recoger{
+    color: $por_recoger;
+}
+.fc_en_transito{
+    color: $azul-3;
+}
+.fc_entregado{
+    color: $entregado;
+}
+.fc_falso_flete{
+    color: $falso_flete;
+}
+.fc_anulado{
+    color: $anulado;
+}

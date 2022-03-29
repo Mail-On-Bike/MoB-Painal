@@ -7,69 +7,88 @@
 						<h5 class="modal-title" id="exampleModalScrollableTitle">Datos del pedido: # {{pedido.id}}</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeModal"></button>
 					</div>
-					<div class="modal-body">
+          <div class="modal-body">
 						<div class="row">
-							<div class="col-12 text-left card-detalles-pedido">
-								<div class="flex">
-									<div class="w-65 pr-1">
-										<h6 >Fecha de envío:</h6>
-										<p >{{pedido.fecha}}</p>
-									</div>
-									<div class="w-35">
-										<h6 >Tipo de Envío:</h6>
-										<p >{{pedido.tipoDeEnvio.tipo}}</p>
-									</div>
-								</div>
-								<div class="flex">
-									<div class="w-65 pr-1">
-										<h6 >Tipo de Carga:</h6>
-										<p >{{pedido.tipoCarga}}</p>
-									</div>
-									<div class="w-35">
-										<h6 >Modalidad:</h6>
-										<p >{{pedido.modalidad.tipo}}</p>
-									</div>
-								</div>
-								<div class="flex">
-									<div class="w-65 pr-1">
-										<h6 >Origen:</h6>
-										<p >{{pedido.direccionRemitente}}, {{pedido.distritoRemitente}}</p>
-									</div>
-									<div class="w-35">
-										<h6 >Contacto:</h6>
-										<p >{{pedido.contactoRemitente}}, {{pedido.telefonoRemitente}}</p>
-									</div>
-								</div>
-								<h6 >Observaciones en el Origen:</h6>
-								<p >{{pedido.otroDatoRemitente}}</p>
-                <hr>
-								<div class="flex">
-									<div class="w-65 pr-1">
-										<h6 >Destino:</h6>
-										<p >{{pedido.direccionConsignado}}, {{pedido.distritoConsignado}}</p>
-									</div>
-									<div class="w-35">
-										<h6 >Contacto:</h6>
-										<p >{{pedido.contactoConsignado}}, {{pedido.telefonoConsignado}}</p>
-									</div>
-								</div>
-								<h6 >Observaciones en el Destino:</h6>
-								<p >{{pedido.otroDatoConsignado}}</p>
-								<div class="flex">
-									<div class="w-65 pr-1">
-										<h6 >Distancia Total: </h6>
-										<p >{{pedido.distancia}} km</p>
-									</div>
-									<div class="w-35">
-										<h6 >Tarifa: </h6>
-										<p >S./ {{pedido.tarifa}}</p>
-									</div>
-								</div>
-								
-								<h6 >Forma de pago predefinida: </h6>
-								<p >Credito</p>
-							</div>  
-							<div class="col-12"><br></div>
+							<div class="col-12 text-left card-detalles-pedido p-1">
+                <div class="d-flex w-100 justify-content-between mb-3">
+                  <div>
+                    <h6 class="mb-2">{{ pedido.tipoDeEnvio.tipo }}</h6>  
+                    <span for="">{{ pedido.tipoCarga }} / {{ pedido.modalidad.tipo }}</span><br>
+                    <span>Distancia: {{ pedido.distancia}}km.</span><br>
+                    <span>CO2 Ahorrado: {{ pedido.CO2Ahorrado}}km.</span>
+                  </div>
+                  <div class="text-end">
+                    <h5 class="fw-700"  
+                      :class="{fc_programado:(pedido.statusId === 1),
+                              fc_por_recoger:(pedido.statusId === 2),
+                              fc_en_transito:(pedido.statusId === 3),
+                              fc_entregado:(pedido.statusId === 4),  
+                              fc_falso_flete: (pedido.statusId === 5),}">{{pedido.status.tag}}</h5>
+                    <span>{{ formatDate(pedido.fecha) }}</span>
+                  </div>
+                </div>
+                <div class="d-flex w-100 flex-column">
+                  <div class="w-100 d-flex" style="border-bottom: 1px solid #ddd;">
+                    <div class="mb-0 w-auto py-1 px-4 fw-600" style="border-top-left-radius: 10px; border-top-right-radius: 10px; background-color: aliceblue;">Origen</div>
+                  </div>
+                  <div class="d-flex flex-column p-2">
+                    <span class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> {{pedido.direccionRemitente}}, {{pedido.distritoRemitente}}</span>
+                    <div class="d-flex justify-content-between">
+                      <span class="mb-1"><i class="fas fa-user me-1"></i> {{pedido.contactoRemitente}}</span>
+                      <span class="mb-1"><i class="fas fa-phone me-1"></i> {{pedido.telefonoRemitente}}</span>
+                    </div>
+                    <div class="w-100">
+                      <span class="mb-1"><i class="fas fa-comment-alt me-1"></i> {{pedido.otroDatoRemitente != '' ? pedido.otroDatoRemitente : 'Sin Comentarios Adiconales'}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex w-100 flex-column">
+                  <div class="w-100 d-flex" style="border-bottom: 1px solid #ddd;">
+                    <div class="mb-0 w-auto py-1 px-4 fw-600" style="border-top-left-radius: 10px; border-top-right-radius: 10px; background-color: aliceblue;">Destino</div>
+                  </div>
+                  <div class="d-flex flex-column p-2">
+                    <span class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> {{pedido.direccionConsignado}}, {{pedido.distrito.distrito}}</span>
+                    <div class="d-flex justify-content-between">
+                      <span class="mb-1"><i class="fas fa-user me-1"></i> {{pedido.contactoConsignado}}</span>
+                      <span class="mb-1"><i class="fas fa-phone me-1"></i> {{pedido.telefonoConsignado}}</span>
+                    </div>
+                    <div class="w-100">
+                      <span class="mb-1"><i class="fas fa-comment-alt me-1"></i> {{pedido.otroDatoConsignado != '' ? pedido.otroDatoConsignado : 'Sin Comentarios Adiconales'}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex w-100 flex-column">
+                  <div class="w-100 d-flex" style="border-bottom: 1px solid #ddd;">
+                    <div class="mb-0 w-auto py-1 px-4 fw-600" 
+                      style="border-top-left-radius: 10px; border-top-right-radius: 10px; background-color: aliceblue;"
+                    >
+                      Pago
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between p-2">
+                    <div class="d-flex flex-column justify-content-center">
+                      <span>Forma de Pago</span>
+                    <h6 class="fw-600">{{pedido.formaPago}}</h6>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center">
+                      <span>Tarifa</span>
+                      <h5 class="fw-600">S./ {{pedido.tarifa}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex w-100 flex-column">
+                  <div class="w-100 d-flex" style="border-bottom: 1px solid #ddd;">
+                    <div class="mb-0 w-auto py-1 px-4 fw-600" 
+                      style="border-top-left-radius: 10px; border-top-right-radius: 10px; background-color: aliceblue;"
+                    >
+                      Comentarios
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between p-2">
+                    <span>{{ pedido.comentario }}</span>
+                  </div>
+                </div>
+              </div>
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -79,150 +98,6 @@
 			</div>
 		</div>
 		<div class="modal-backdrop fade show"></div>
-    <!-- <transition name="modal">
-      <div class="modal-mask">
-        <div class="modal-wrapper">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
-                <button
-                  style="font-size: 14px; background-color: white; border: 0"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span
-                    style="font-size: 14px !important"
-                    aria-hidden="true"
-                    @click="closeModal"
-                    >X</span
-                  >
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="row">
-                  <div class="col-12 text-left card-pedido">
-                    <div class="card-pedido-header flex space-between">
-                      <h5 class="white w-auto">Datos del pedido</h5>
-
-                      <button class="btn-sm btn-warning" @click="editarPedido">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                    </div>
-
-                    <br />
-                    <div class="flex">
-                      <div class="w-50 pr-1">
-                        <h6 >Fecha de envío:</h6>
-                        <p >{{ pedido.fecha }}</p>
-                      </div>
-                      <div class="w-50">
-                        <h6 >Tipo de Envío:</h6>
-                        <p >
-                          {{ pedido.tipoEnvio }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="flex">
-                      <div class="w-65 pr-1">
-                        <h6 >Tipo de Carga:</h6>
-                        <p >
-                          {{ pedido.tipoCarga }}
-                        </p>
-                      </div>
-                      <div class="w-35">
-                        <h6 >Modalidad:</h6>
-                        <p >
-                          {{ pedido.modalidad }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="flex">
-                      <div class="w-65 pr-1">
-                        <h6 >Origen:</h6>
-                        <p >
-                          {{ pedido.direccionRemitente }},
-                          {{ pedido.distritoRemitente }}
-                        </p>
-                      </div>
-                      <div class="w-35">
-                        <h6 >Contacto:</h6>
-                        <p >
-                          {{ pedido.contactoRemitente }},
-                          {{ pedido.telefonoRemitente }}
-                        </p>
-                      </div>
-                    </div>
-                    <h6 >Observaciones en el Origen:</h6>
-                    <p >
-                      {{ pedido.otroDatoRemitente }}
-                    </p>
-                    <div class="flex">
-                      <div class="w-65 pr-1">
-                        <h6 >Destino:</h6>
-                        <p >
-                          {{ pedido.direccionConsignado }},
-                          {{ pedido.distritoConsignado }}
-                        </p>
-                      </div>
-                      <div class="w-35">
-                        <h6 >Contacto:</h6>
-                        <p >
-                          {{ pedido.contactoConsignado }},
-                          {{ pedido.telefonoConsignado }}
-                        </p>
-                      </div>
-                    </div>
-                    <h6 >Observaciones en el Destino:</h6>
-                    <p >
-                      {{ pedido.otroDatoConsignado }}
-                    </p>
-                    <div class="flex">
-                      <div class="w-65 pr-1">
-                        <h6 >Distancia Total:</h6>
-                        <p >
-                          {{ pedido.distancia }} km
-                        </p>
-                      </div>
-                      <div class="w-35">
-                        <h6 >Tarifa:</h6>
-                        <p >
-                          S./ {{ pedido.tarifa }}
-                        </p>
-                      </div>
-                    </div>
-
-                    <h6 >Forma de pago predefinida:</h6>
-                    <p >Credito</p>
-                  </div>
-                  <div class="col-12"><br /></div>
-                  <div class="col-6">
-                    <button class="btn btn-danger">Cancelar</button>
-                  </div>
-                  <div class="col-6">
-                    <button class="btn btn-accept" @click="handleAnadirPedido">
-                      Confirmar
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  @click="closeModal"
-                >
-                  Close
-                </button>
-                <button type="button" class="btn btn-primary">
-                  Save changes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition> -->
   </div>
 </template>
 
@@ -235,8 +110,15 @@ export default {
       emit("closeModal");
     };
 
+    const formatDate = (fecha) => {
+			let newDate = fecha.split('T')[0]
+			let dateSplitted = newDate.split('-')
+			return dateSplitted[2] + '/' + dateSplitted[1] + '/' + dateSplitted[0]
+		}
+
     return {
       closeModal,
+      formatDate
     };
   },
 };

@@ -25,25 +25,25 @@ const getFechaFinal = () => {
   return formatDate(fecha.setDate(fecha.getDate() + 2));
 };
 
-const useSemanaLaboral = () => {
+const useSemanaLaboral = async () => {
   const semana = ref([]);
   const fechaInicial = ref("");
   const fechaFinal = ref("");
 
-  getSemana()
+  await getSemana()
     .then((res) => {
       semana.value = res;
-      console.log({ res });
+      // console.log({ res });
     })
     .catch((err) => console.error(err));
 
   fechaInicial.value = getFechaInicial(semana);
-  console.log(fechaInicial.value);
+  // console.log(fechaInicial.value);
 
   fechaFinal.value = getFechaFinal(semana);
-  console.log(fechaFinal.value);
-
-  return { semana, fechaInicial, fechaFinal };
+  // console.log(fechaFinal.value);
+  
+  return { semana: semana.value, fechaInicial: fechaInicial.value, fechaFinal: fechaFinal.value };
 };
 
 export default useSemanaLaboral;

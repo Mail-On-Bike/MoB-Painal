@@ -541,39 +541,56 @@ export default {
       "2022-01-02",
     ];
 
-    const { semana } = useSemanaLaboral();
-    console.log({ semanaLaboral: semana.value });
+    const dias = [
+      'domingo',
+      'lunes',
+      'martes',
+      'miercoles',
+      'jueves',
+      'viernes',
+      'sabado'
+    ]
+
+    // const { semana } = await useSemanaLaboral();
+    // console.log({ semanaLaboral: semana.value });
 
     const beforeHolidays = ["2021-12-23", "2021-12-30"];
 
-    const getMaxHour = () => {
-      const hoy = new Date().toISOString().split("T")[0];
-      if (beforeHolidays.includes(hoy)) return 21;
-
-      return 14;
+    const getMaxHour = (semana) => {
+      for(let i = 0; i < semana.length; i++){
+        console.log(dias[dateNum])
+        if(dias[dateNum] === semana[i].dia){
+          console.log(semana[i].deadline)
+          return Number(semana[i].deadline.substr(0,2))
+        }
+      }
     };
 
-    onMounted(() => {
+    let dateNum = 0
+    let semanaLaborable = undefined
+    onMounted(async () => {
       let fecha = new Date();
-      let year = fecha.getFullYear();
-      let month = fecha.getMonth() + 1;
-      let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
-      // if (fecha.getHours() < 14) {
-      if (fecha.getHours() < getMaxHour()) {
-        fechaMinima.value = year + "-" + month + "-" + date;
+      // let year = fecha.getFullYear();
+      // let month = fecha.getMonth() + 1;
+      // let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
+      dateNum = fecha.getDay();
+      let semana = await useSemanaLaboral()
+      semanaLaborable = semana.semana;
+      if (fecha.getHours() < getMaxHour(semanaLaborable)) {
+        fechaMinima.value = formatDate(fecha.setDate(fecha.getDate()));
         if (esDomingo(fechaMinima.value)) {
           fecha.setDate(fecha.getDate() + 1);
           fechaMinima.value = formatDate(fecha);
         }
       } else {
-        fechaMinima.value = year + "-" + month + "-" + (date + 1);
+        fechaMinima.value = formatDate(fecha.setDate(fecha.getDate() + 1));
         if (esDomingo(fechaMinima.value)) {
           fecha.setDate(fecha.getDate() + 1);
           fechaMinima.value = formatDate(fecha);
         }
       }
       fechaMaxima.value = formatDate(fecha.setDate(fecha.getDate() + 2));
-      while (holidays.includes(String(fechaMaxima.value))) {
+      if (holidays.includes(String(fechaMaxima.value))) {
         let temp = new Date(
           fechaMaxima.value.split("-")[0],
           parseInt(fechaMaxima.value.split("-")[1]) - 1,
@@ -582,7 +599,7 @@ export default {
         fechaMaxima.value = formatDate(temp.setDate(temp.getDate() + 1));
       }
       nuevoPedido.fecha = fechaMinima.value;
-      while (holidays.includes(String(nuevoPedido.fecha))) {
+      if (holidays.includes(String(nuevoPedido.fecha))) {
         let temp = new Date(
           nuevoPedido.fecha.split("-")[0],
           parseInt(nuevoPedido.fecha.split("-")[1]) - 1,
@@ -590,6 +607,7 @@ export default {
         );
         nuevoPedido.fecha = formatDate(temp.setDate(temp.getDate() + 1));
       }
+
     });
 
     const esDomingo = (date) => {
@@ -619,7 +637,7 @@ export default {
       let year = fecha.getFullYear();
       let month = fecha.getMonth() + 1;
       let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
-
+      month = month > 9 ? month : '0' + month
       return year + "-" + month + "-" + date;
     };
 
@@ -693,15 +711,14 @@ export default {
         });
       } else {
         if (validateHolidays(nuevoPedido.fecha)) {
-          if (esDomingo(nuevoPedido.fecha)) {
+          if (isLaborable(dias[dateNum])) {
             Swal.fire({
               title: "Heey!",
-              text: "No se puede solicitar un envio en Domingo",
+              text: "No se puede solicitar un envio para el día seleccionado",
               icon: "warning",
               confirmButtonText: "OK",
             });
           } else {
-            continuar.value = false;
             calcularDistancia();
           }
         }
@@ -712,6 +729,14 @@ export default {
       continuar.value = true;
       //validar.value = false;
     };
+
+    const isLaborable = (dia) => {
+      for(let i = 0; i < semanaLaborable.length; i++){
+        if(semanaLaborable[i].dia === dia){
+          return semanaLaborable[i].isLaborable
+        }
+      }
+    }
 
     const validarForm = () => {
       if (
