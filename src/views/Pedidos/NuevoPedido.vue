@@ -31,11 +31,9 @@
                 id=""
                 v-model="nuevoPedido.modalidad"
               >
-                <option
-                  v-for="modalidad in modalidades"
-                  :key="modalidad.tipo"
-                  >{{ modalidad.tipo }}</option
-                >
+                <option v-for="modalidad in modalidades" :key="modalidad.tipo">
+                  {{ modalidad.tipo }}
+                </option>
               </select>
             </div>
           </div>
@@ -51,8 +49,9 @@
                 <option
                   v-for="formaDePago in formasDePago"
                   :key="formaDePago.id"
-                  >{{ formaDePago.pago }}</option
                 >
+                  {{ formaDePago.pago }}
+                </option>
               </select>
             </div>
           </div>
@@ -83,8 +82,9 @@
                   v-for="tipo in tiposDeCarga"
                   :key="tipo.tipo"
                   :value="tipo.tipo"
-                  >{{ tipo.tipo }}</option
                 >
+                  {{ tipo.tipo }}
+                </option>
               </select>
             </div>
           </div>
@@ -221,8 +221,9 @@
                             v-for="distrito in distritos"
                             :key="distrito.id"
                             :value="distrito.distrito"
-                            >{{ distrito.distrito }}</option
                           >
+                            {{ distrito.distrito }}
+                          </option>
                         </select>
                       </div>
                     </div>
@@ -234,7 +235,7 @@
                           name=""
                           id=""
                           rows="3"
-                          style="resize:none;"
+                          style="resize: none"
                           v-model="nuevoPedido.otroDatoRemitente"
                         ></textarea>
                       </div>
@@ -342,8 +343,9 @@
                             v-for="distrito in distritos"
                             :key="distrito.id"
                             :value="distrito.distrito"
-                            >{{ distrito.distrito }}</option
                           >
+                            {{ distrito.distrito }}
+                          </option>
                         </select>
                       </div>
                     </div>
@@ -355,7 +357,7 @@
                           name=""
                           id=""
                           rows="3"
-                          style="resize:none;"
+                          style="resize: none"
                           v-model="nuevoPedido.otroDatoConsignado"
                         ></textarea>
                       </div>
@@ -375,7 +377,7 @@
       <div v-if="!continuar" class="container">
         <div class="row">
           <div class="text-left col-12 card-pedido">
-            <div class="flex card-pedido-header space-between ">
+            <div class="flex card-pedido-header space-between">
               <h5 class="w-auto white">Datos del pedido</h5>
 
               <button class="btn-sm btn-warning" @click="editarPedido">
@@ -464,7 +466,7 @@
           <div class="col-6">
             <button
               class="btn btn-accept"
-              style="min-width: 100px;"
+              style="min-width: 100px"
               @click="handleAnadirPedido"
               :disabled="saving"
             >
@@ -475,9 +477,7 @@
               >
                 <span class="visually-hidden">Loading...</span>
               </div>
-              <span v-else>
-                Confirmar
-              </span>
+              <span v-else> Confirmar </span>
             </button>
           </div>
         </div>
@@ -500,6 +500,7 @@ import PedidoService from "@/services/pedido.service";
 import { useStore } from "vuex";
 import Swal from "sweetalert2";
 import calcularComision from "@/services/comision.service";
+import useSemanaLaboral from "../../composables/useSemanaLaboral";
 
 export default {
   components: {
@@ -540,36 +541,56 @@ export default {
       "2022-01-02",
     ];
 
+    const dias = [
+      'domingo',
+      'lunes',
+      'martes',
+      'miercoles',
+      'jueves',
+      'viernes',
+      'sabado'
+    ]
+
+    // const { semana } = await useSemanaLaboral();
+    // console.log({ semanaLaboral: semana.value });
+
     const beforeHolidays = ["2021-12-23", "2021-12-30"];
 
-    const getMaxHour = () => {
-      const hoy = new Date().toISOString().split("T")[0];
-      if (beforeHolidays.includes(hoy)) return 21;
-
-      return 14;
+    const getMaxHour = (semana) => {
+      for(let i = 0; i < semana.length; i++){
+        console.log(dias[dateNum])
+        if(dias[dateNum] === semana[i].dia){
+          console.log(semana[i].deadline)
+          return Number(semana[i].deadline.substr(0,2))
+        }
+      }
     };
 
-    onMounted(() => {
+    let dateNum = 0
+    let semanaLaborable = undefined
+    onMounted(async () => {
       let fecha = new Date();
-      let year = fecha.getFullYear();
-      let month = fecha.getMonth() + 1;
-      let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
-      // if (fecha.getHours() < 14) {
-      if (fecha.getHours() < getMaxHour()) {
-        fechaMinima.value = year + "-" + month + "-" + date;
+      // let year = fecha.getFullYear();
+      // let month = fecha.getMonth() + 1;
+      // let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
+      dateNum = fecha.getDay();
+      let semana = await useSemanaLaboral()
+      semanaLaborable = semana.semana;
+      if (fecha.getHours() < getMaxHour(semanaLaborable)) {
+        fechaMinima.value = formatDate(fecha.setDate(fecha.getDate()));
         if (esDomingo(fechaMinima.value)) {
           fecha.setDate(fecha.getDate() + 1);
           fechaMinima.value = formatDate(fecha);
         }
       } else {
-        fechaMinima.value = year + "-" + month + "-" + (date + 1);
+        fechaMinima.value = formatDate(fecha.setDate(fecha.getDate() + 1));
         if (esDomingo(fechaMinima.value)) {
           fecha.setDate(fecha.getDate() + 1);
           fechaMinima.value = formatDate(fecha);
         }
       }
       fechaMaxima.value = formatDate(fecha.setDate(fecha.getDate() + 2));
-      while (holidays.includes(String(fechaMaxima.value))) {
+      if (holidays.includes(String(fechaMaxima.value))) {
         let temp = new Date(
           fechaMaxima.value.split("-")[0],
           parseInt(fechaMaxima.value.split("-")[1]) - 1,
@@ -578,7 +599,7 @@ export default {
         fechaMaxima.value = formatDate(temp.setDate(temp.getDate() + 1));
       }
       nuevoPedido.fecha = fechaMinima.value;
-      while (holidays.includes(String(nuevoPedido.fecha))) {
+      if (holidays.includes(String(nuevoPedido.fecha))) {
         let temp = new Date(
           nuevoPedido.fecha.split("-")[0],
           parseInt(nuevoPedido.fecha.split("-")[1]) - 1,
@@ -586,6 +607,7 @@ export default {
         );
         nuevoPedido.fecha = formatDate(temp.setDate(temp.getDate() + 1));
       }
+
     });
 
     const esDomingo = (date) => {
@@ -601,8 +623,7 @@ export default {
       if (holidays.includes(String(date)) && !beforeHolidays.includes(hoy)) {
         Swal.fire({
           title: "¡Hey!",
-          text:
-            "Te recordamos que no laboraremos los días 25 y 26 de diciembre, ni 1 y 2 de enero. Los días 24 y 31 de diciembre no se podrán programar pedidos para el mismo día.",
+          text: "Te recordamos que no laboraremos los días 25 y 26 de diciembre, ni 1 y 2 de enero. Los días 24 y 31 de diciembre no se podrán programar pedidos para el mismo día.",
           icon: "warning",
           confirmButtonText: "OK",
         });
@@ -616,7 +637,7 @@ export default {
       let year = fecha.getFullYear();
       let month = fecha.getMonth() + 1;
       let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
-
+      month = month > 9 ? month : '0' + month
       return year + "-" + month + "-" + date;
     };
 
@@ -638,8 +659,7 @@ export default {
       distritos.value = store.state.auxiliares.zonaCobertura;
       Swal.fire({
         title: "¡Hey!",
-        text:
-          'Te recordamos que algunos distritos no los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
+        text: 'Te recordamos que algunos distritos no los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
         icon: "info",
         confirmButtonText: "OK",
       });
@@ -670,8 +690,7 @@ export default {
       if (e.target.value === "E-Commerce") {
         Swal.fire({
           title: "¡Hey!",
-          text:
-            'Te recordamos que hay algunos distritos que nos los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
+          text: 'Te recordamos que hay algunos distritos que nos los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
           icon: "info",
           confirmButtonText: "OK",
         });
@@ -692,15 +711,14 @@ export default {
         });
       } else {
         if (validateHolidays(nuevoPedido.fecha)) {
-          if (esDomingo(nuevoPedido.fecha)) {
+          if (isLaborable(dias[dateNum])) {
             Swal.fire({
               title: "Heey!",
-              text: "No se puede solicitar un envio en Domingo",
+              text: "No se puede solicitar un envio para el día seleccionado",
               icon: "warning",
               confirmButtonText: "OK",
             });
           } else {
-            continuar.value = false;
             calcularDistancia();
           }
         }
@@ -711,6 +729,14 @@ export default {
       continuar.value = true;
       //validar.value = false;
     };
+
+    const isLaborable = (dia) => {
+      for(let i = 0; i < semanaLaborable.length; i++){
+        if(semanaLaborable[i].dia === dia){
+          return semanaLaborable[i].isLaborable
+        }
+      }
+    }
 
     const validarForm = () => {
       if (
@@ -751,8 +777,7 @@ export default {
         ) {
           Swal.fire({
             title: "Oops!",
-            text:
-              "Ocurrió un error al calcular la distancia, verifica que las direcciones y distritos sean los correctos",
+            text: "Ocurrió un error al calcular la distancia, verifica que las direcciones y distritos sean los correctos",
             icon: "error",
             confirmButtonText: "OK",
           });
@@ -821,8 +846,7 @@ export default {
               ) {
                 Swal.fire({
                   title: "Distrito con restricciones",
-                  text:
-                    "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
+                  text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
                   icon: "info",
                   showCancelButton: false,
                   confirmButtonText: "¡Entendido!",
@@ -887,7 +911,6 @@ export default {
         nuevoPedido.telefonoConsignado = "";
         nuevoPedido.empresaConsignado = "";
         nuevoPedido.otroDatoConsignado = "";
-
       }
     };
 
