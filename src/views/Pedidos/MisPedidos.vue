@@ -342,7 +342,7 @@ export default {
 			getPedidos();
 		})
 
-		const getPedidos = async (page = 0, size = 100)=>{
+		const getPedidos = async (page = 0, size = 500)=>{
 			let params = {
 				id: store.state.user.clienteAsignado.id,
 				page: page,
@@ -405,7 +405,7 @@ export default {
 			return newDate[2] + '/' + newDate[1] + '/' + newDate[0];
 		}
 
-		const paginar = (pedidosParaPaginar, max = 5) => {
+		const paginar = (pedidosParaPaginar, max = 50) => {
 			let count = 1;
 			let page = 1;
 			let pedidosPaginados = {};
