@@ -65,7 +65,6 @@
                 :class="{ empty: validar && nuevoPedido.fecha == '' }"
                 :min="fechaMinima"
                 :max="fechaMaxima"
-                step="any"
               />
             </div>
           </div>
@@ -500,7 +499,7 @@ import PedidoService from "@/services/pedido.service";
 import { useStore } from "vuex";
 import Swal from "sweetalert2";
 import calcularComision from "@/services/comision.service";
-import { getTodayDay, getFechaInicial, getFechaFinal } from "../../utils";
+import { getToday, getFechaInicial, getFechaFinal } from "../../utils";
 import { getSemana } from "../../services/semana-laboral.service";
 
 export default {
@@ -533,7 +532,9 @@ export default {
       { id: 7, pago: "Transferencia" },
     ]);
 
-    let semana = onBeforeMount(async () => {
+    let semana;
+
+    onBeforeMount(async () => {
       semana = await getSemana();
       fechaMinima.value = getFechaInicial(semana);
       fechaMaxima.value = getFechaFinal(semana, fechaMinima.value);
@@ -542,7 +543,7 @@ export default {
     });
 
     const isLaborable = () => {
-      const currentDay = getTodayDay();
+      const currentDay = getToday();
       return semana.find((day) => day.id === currentDay).isLaborable;
     };
 
@@ -623,7 +624,7 @@ export default {
           confirmButtonText: "OK",
         });
       } else {
-        if (isLaborable()) {
+        if (!isLaborable()) {
           Swal.fire({
             title: "Heey!",
             text: "No se puede solicitar un envio para el día seleccionado",
