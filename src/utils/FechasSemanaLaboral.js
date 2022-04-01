@@ -1,19 +1,17 @@
-import {
-  convertDate,
-  formatDate,
-  getDayFromDate,
-  getToday,
-  getTodayDay,
-  weekLabel,
-} from "./FormatFechas";
+import { getMinutes, getToday, weekLabel } from "./FormatFechas";
+
+import dayjs from "dayjs";
+import "dayjs/locale/es";
 
 const getMaxHour = (semanaArray, currentDay) => {
   return semanaArray.find((day) => day.id === currentDay).deadline;
 };
 
 const nextDay = (semanaArray, currentDay) => {
-  const fecha = getToday();
-  const nextWeek = new Date(new Date().setDate(new Date(fecha).getDate() + 7));
+  const fecha = dayjs().format("YYYY-MM-DD");
+  const nextWeek = dayjs()
+    .set("date", dayjs().date() + 7)
+    .format("YYYY-MM-DD");
 
   const laborablesRestantes = semanaArray
     .filter((d) => d.isLaborable)
@@ -33,10 +31,8 @@ const nextDay = (semanaArray, currentDay) => {
 };
 
 export const getFechaInicial = (semanaArray) => {
-  const fecha = new Date().toLocaleString("es", { timeZone: "America/Lima" });
-  const date = fecha.split(" ")[0];
-  const day = getTodayDay();
-  const hour = fecha.split(" ")[1];
+  const day = getToday();
+  const hour = `${dayjs().hour()}:${getMinutes()}`;
 
   if (
     !semanaArray.find((d) => d.id === day).isLaborable ||
@@ -44,15 +40,15 @@ export const getFechaInicial = (semanaArray) => {
   )
     return nextDay(semanaArray, day);
 
-  return convertDate(date);
+  return dayjs().format("YYYY-MM-DD");
 };
 
 export const getFechaFinal = (semanaArray, inicio) => {
-  const fechaInicio = new Date(formatDate(inicio));
-  const currentDay = getDayFromDate(fechaInicio);
-  const nextWeek = new Date(
-    new Date().setDate(new Date(fechaInicio).getDate() + 7)
-  );
+  const fechaInicio = dayjs(inicio).format("YYYY-MM-DD");
+  const currentDay = dayjs(inicio).day() === 0 ? 7 : dayjs(inicio).day();
+  const nextWeek = dayjs()
+    .set("date", dayjs().date() + 7)
+    .format("YYYY-MM-DD");
 
   const laborablesRestantes = semanaArray
     .filter((d) => d.isLaborable)
@@ -64,11 +60,8 @@ export const getFechaFinal = (semanaArray, inicio) => {
     .map((d) => d.id);
 
   const newArray = laborablesRestantes.concat(laborablesNext);
-
   const result = weekLabel(fechaInicio);
   const result2 = weekLabel(nextWeek);
 
-  return convertDate(
-    newArray[0] === 1 ? result2[newArray[0] - 1] : result[newArray[0] - 1]
-  );
+  return newArray[0] === 1 ? result2[newArray[0] - 1] : result[newArray[0] - 1];
 };

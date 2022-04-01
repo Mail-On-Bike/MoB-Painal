@@ -1,36 +1,16 @@
-export const convertDate = (value) => {
-  return value.split("/").reverse().join("-");
-};
+import dayjs from "dayjs";
+import "dayjs/locale/es";
 
 export const getToday = () => {
-  const fecha = new Date().toLocaleString("es", { timeZone: "America/Lima" });
-  const date = fecha.split(", ")[0];
-
-  return new Date(convertDate(date));
+  return dayjs().day() === 0 ? 7 : dayjs().day();
 };
 
-export const getTodayDay = () => {
-  return getToday().getDay() === 0 ? 7 : getToday().getDay();
+export const getMinutes = () => {
+  return dayjs().minute() < 10 ? `0${dayjs().minute()}` : dayjs().minute();
 };
 
-export const getDayFromDate = (value) => {
-  const fecha = new Date(value).toLocaleString("es", {
-    timeZone: "America/Lima",
-  });
-
-  return new Date(convertDate(fecha.split(", ")[0])).getDay();
-};
-
-export const formatDate = (value) => {
-  const fecha = new Date(value).toLocaleString("es", {
-    timeZone: "America/Lima",
-  });
-  const date = fecha.split(", ")[0];
-
-  return convertDate(date);
-};
-
-export function weekLabel(current) {
+export function weekLabel(fecha) {
+  const current = new Date(`${fecha}:10:00:00`);
   const week = [];
   const weekFormat = [];
 
@@ -47,7 +27,7 @@ export function weekLabel(current) {
   }
 
   week.forEach((w) => {
-    weekFormat.push(w.toISOString().split("T")[0]);
+    weekFormat.push(dayjs(w).format("YYYY-MM-DD"));
   });
 
   return weekFormat;
