@@ -5,6 +5,10 @@ export const getToday = () => {
   return dayjs().day() === 0 ? 7 : dayjs().day();
 };
 
+export const getCurrentDay = (value) => {
+  return dayjs(value).day() === 0 ? 7 : dayjs(value).day();
+};
+
 export const getMinutes = () => {
   return dayjs().minute() < 10 ? `0${dayjs().minute()}` : dayjs().minute();
 };
