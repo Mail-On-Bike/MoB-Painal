@@ -52,11 +52,11 @@ export const getFechaFinal = (semanaArray, inicio) => {
 
   const laborablesRestantes = semanaArray
     .filter((d) => d.isLaborable)
-    .filter((d) => d.id > currentDay + 2)
+    .filter((d) => d.id > currentDay + 1)
     .map((d) => d.id);
   const laborablesNext = semanaArray
     .filter((d) => d.isLaborable)
-    .filter((d) => d.id <= currentDay + 2)
+    .filter((d) => d.id <= currentDay + 1)
     .map((d) => d.id);
 
   const newArray = laborablesRestantes.concat(laborablesNext);

@@ -490,7 +490,6 @@
 import { computed, onBeforeMount, reactive, ref } from "vue";
 import Pedido from "../../models/Pedido";
 import { useRouter } from "vue-router";
-// import { ModelListSelect } from "vue-search-select";
 
 import consultarApi from "@/services/maps.service";
 import calcularTarifa from "@/services/tarifa.service";
@@ -499,13 +498,10 @@ import PedidoService from "@/services/pedido.service";
 import { useStore } from "vuex";
 import Swal from "sweetalert2";
 import calcularComision from "@/services/comision.service";
-import { getToday, getFechaInicial, getFechaFinal } from "../../utils";
+import { getCurrentDay, getFechaInicial, getFechaFinal } from "../../utils";
 import { getSemana } from "../../services/semana-laboral.service";
 
 export default {
-  components: {
-    // ModelListSelect
-  },
   setup() {
     const nuevoPedido = reactive(new Pedido());
     const continuar = ref(true);
@@ -543,7 +539,7 @@ export default {
     });
 
     const isLaborable = () => {
-      const currentDay = getToday();
+      const currentDay = getCurrentDay(fechaMinima.value);
       return semana.find((day) => day.id === currentDay).isLaborable;
     };
 
@@ -625,6 +621,7 @@ export default {
         });
       } else {
         if (!isLaborable()) {
+          console.log("check", !isLaborable());
           Swal.fire({
             title: "Heey!",
             text: "No se puede solicitar un envio para el día seleccionado",
