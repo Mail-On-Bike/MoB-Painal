@@ -1,4 +1,4 @@
-import { getMinutes, getToday, weekLabel } from "./FormatFechas";
+import { getHours, getMinutes, getToday, weekLabel } from "./FormatFechas";
 
 import dayjs from "dayjs";
 import "dayjs/locale/es";
@@ -32,7 +32,7 @@ const nextDay = (semanaArray, currentDay) => {
 
 export const getFechaInicial = (semanaArray) => {
   const day = getToday();
-  const hour = `${dayjs().hour()}:${getMinutes()}`;
+  const hour = `${getHours()}:${getMinutes()}`;
 
   if (
     !semanaArray.find((d) => d.id === day).isLaborable ||
