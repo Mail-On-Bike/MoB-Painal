@@ -699,6 +699,7 @@ export default {
           nuevoPedido.distancia,
           nuevoPedido.tipoEnvio,
           nuevoPedido.modalidad,
+          nuevoPedido.distritoRemitente,
           nuevoPedido.distritoConsignado,
           nuevoPedido.empresaRemitente
         );
