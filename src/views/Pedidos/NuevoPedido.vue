@@ -650,15 +650,15 @@ export default {
 
     const validarForm = () => {
       if (
-        nuevoPedido.fecha == "" ||
-        nuevoPedido.contactoRemitente == "" ||
-        nuevoPedido.telefonoRemitente == "" ||
-        nuevoPedido.direccionRemitente == "" ||
-        nuevoPedido.distritoRemitente == "" ||
-        nuevoPedido.contactoConsignado == "" ||
-        nuevoPedido.telefonoConsignado == "" ||
-        nuevoPedido.direccionConsignado == "" ||
-        nuevoPedido.distritoConsignado == ""
+        !nuevoPedido.fecha ||
+        nuevoPedido.contactoRemitente.trim() === "" ||
+        nuevoPedido.telefonoRemitente.trim() === "" ||
+        nuevoPedido.direccionRemitente.trim() === "" ||
+        nuevoPedido.distritoRemitente.trim() === "" ||
+        nuevoPedido.contactoConsignado.trim() === "" ||
+        nuevoPedido.telefonoConsignado.trim() === "" ||
+        nuevoPedido.direccionConsignado.trim() === "" ||
+        nuevoPedido.distritoConsignado.trim() === ""
       ) {
         return true;
       } else {
@@ -795,6 +795,7 @@ export default {
         nuevoPedido.direccionRemitente = clienteData.value.direccion;
         nuevoPedido.distritoRemitente = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoRemitente = clienteData.value.telefono;
+        nuevoPedido.otroDatoRemitente = clienteData.value.otroDato;
       } else {
         nuevoPedido.contactoRemitente = "";
         nuevoPedido.direccionRemitente = "";
@@ -811,6 +812,7 @@ export default {
         nuevoPedido.distritoConsignado = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoConsignado = clienteData.value.telefono;
         nuevoPedido.empresaConsignado = clienteData.value.razonComercial;
+        nuevoPedido.otroDatoConsignado = clienteData.value.otroDato;
       } else {
         nuevoPedido.contactoConsignado = "";
         nuevoPedido.direccionConsignado = "";
