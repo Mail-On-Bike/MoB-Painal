@@ -5,14 +5,23 @@ export default async function calcularTarifa(
   distancia,
   tipoEnvio,
   modalidad,
-  distrito, clienteRemitente
+  distritoOrigen,
+  distritoDestino,
+  clienteRemitente
 ) {
   try {
     const {
       data: { tarifa, tarifaSugerida },
     } = await axios.post(
       `${process.env.VUE_APP_HERMES}/calcular-tarifa`,
-      { distancia, tipoEnvio, modalidad, distrito, clienteRemitente },
+      {
+        distancia,
+        tipoEnvio,
+        modalidad,
+        distritoOrigen,
+        distritoDestino,
+        clienteRemitente,
+      },
       {
         headers: authHeader(),
       }
