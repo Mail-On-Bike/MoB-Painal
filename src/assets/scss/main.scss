@@ -1,37 +1,36 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 @import "variables";
 
-
 * {
-    font-family: 'Montserrat';
+    font-family: "Montserrat";
 }
 
-.flex{
+.flex {
     display: flex;
 }
 
-.space-between{
+.space-between {
     justify-content: space-between;
 }
-.card-pedido{
+.card-pedido {
     background-color: rgba(0, 0, 0, 0.308);
     border-radius: 7px;
     padding-top: 15px;
 }
-.btn{
+.btn {
     padding: 7px 35px;
     min-height: 40px !important;
     font-weight: 500;
 }
 
-.fw-700{
+.fw-700 {
     font-weight: 700;
 }
-.fw-600{
+.fw-600 {
     font-weight: 600;
 }
 
-.btn-sm{
+.btn-sm {
     padding: 2px 10px;
     min-height: 30px !important;
     border: 0;
@@ -39,215 +38,231 @@
     font-size: 14px;
 }
 
-.btn-accept{
+.btn-accept {
     text-align: center !important;
     background-color: #303868 !important;
     color: white !important;
-    &:hover{
+    &:hover {
         background-color: #374075 !important;
         color: white;
     }
 }
 
-.btn-next{
+.btn-next {
     text-align: center !important;
     padding: 7px 40px !important;
     min-height: 40px !important;
-    background-color: #6F8FC8 !important;
+    background-color: #6f8fc8 !important;
     color: white !important;
     font-weight: 500 !important;
-    &:hover{
+    &:hover {
         background-color: #7da2e0 !important;
         color: white;
     }
 }
-.br-50{
+.br-50 {
     border-radius: 36px !important;
 }
 
-.w-100{
+.w-100 {
     width: 100% !important;
 }
-.w-90{
+.w-90 {
     width: 90% !important;
 }
 
-.w-70{
+.w-70 {
     width: 70% !important;
 }
 
-.w-60{
+.w-60 {
     width: 60% !important;
 }
-.w-65{
+.w-65 {
     width: 65% !important;
 }
 
-.w-30{
+.w-30 {
     width: 30%;
 }
 
-.w-35{
+.w-35 {
     width: 35%;
 }
 
-.pr-1{
+.pr-1 {
     padding-right: 5px !important;
 }
-.pr-2{
+.pr-2 {
     padding-right: 10px !important;
 }
-.pr-3{
+.pr-3 {
     padding-right: 15px !important;
 }
 
-.pl-1{
+.pl-1 {
     padding-left: 5px !important;
 }
-.pl-2{
+.pl-2 {
     padding-left: 10px !important;
 }
-.pl-3{
+.pl-3 {
     padding-left: 15px !important;
 }
 
-.w-40{
+.w-40 {
     width: 40% !important;
 }
 
-.w-20{
+.w-20 {
     width: 20% !important;
 }
 
-
-.bg_programado{
+.bg_programado {
     background-color: $programado;
 }
-.bg_por_recoger{
+.bg_por_recoger {
     background-color: $por_recoger;
 }
-.bg_en_transito{
+.bg_en_transito {
     background-color: $azul-3;
 }
-.bg_entregado{
+.bg_entregado {
     background-color: $entregado;
 }
-.bg_falso_flete{
+.bg_falso_flete {
     background-color: $falso_flete;
 }
-.bg_anulado{
+.bg_anulado {
     background-color: $anulado;
 }
 
-.fc_programado{
+.fc_programado {
     color: $programado;
 }
-.fc_por_recoger{
+.fc_por_recoger {
     color: $por_recoger;
 }
-.fc_en_transito{
+.fc_en_transito {
     color: $azul-3;
 }
-.fc_entregado{
+.fc_entregado {
     color: $entregado;
 }
-.fc_falso_flete{
+.fc_falso_flete {
     color: $falso_flete;
 }
-.fc_anulado{
+.fc_anulado {
     color: $anulado;
 }
 
-
-#nav{
+#nav {
     padding: 17px 10px;
     height: 60px;
 }
 
-.overlayMain{
+.overlayMain {
     padding: 15px 0px;
     overflow-y: auto;
     width: 100%;
     height: 100%;
     //background-color: rgba(2, 7, 22, 0.89);
     background: rgba(5, 43, 141, 0.712);
-    background: linear-gradient(90deg, rgba(5, 43, 141, 0.966) 0%, rgba(39, 117, 169, 0.959) 50%, rgba(70, 185, 195, 0.959)100%);
+    background: linear-gradient(
+        90deg,
+        rgba(5, 43, 141, 0.966) 0%,
+        rgba(39, 117, 169, 0.959) 50%,
+        rgba(70, 185, 195, 0.959) 100%
+    );
 }
 
-.overlayLogin{
+.overlayLogin {
     width: 100%;
     height: 100%;
     //background-color: rgba(2, 7, 22, 0.89);
     background: rgba(5, 43, 141, 0.712);
-    background: linear-gradient(90deg, rgba(5, 43, 141, 0.89) 0%, rgba(39, 117, 169, 0.897) 50%, rgba(70, 185, 195, 0.897)100%);
+    background: linear-gradient(
+        90deg,
+        rgba(5, 43, 141, 0.89) 0%,
+        rgba(39, 117, 169, 0.897) 50%,
+        rgba(70, 185, 195, 0.897) 100%
+    );
 }
 
-.flex-center{
+.flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.layoutLogin{
+.layoutLogin {
     width: 100%;
     height: 100vh;
-    background-image: url(http://mailonbike.com/wp-content/uploads/2018/09/169937362.jpeg);
+    background-image: url(/169937362.jpeg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
 }
-.layoutMain{
+.layoutMain {
     width: 100%;
     height: calc(100vh - 60px);
-    background-image: url('../MoB-logo.png');
+    background-image: url("../MoB-logo.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 90%;
 }
 
-.white{
+.white {
     color: white !important;
 }
 
-.white-seconday{
+.white-seconday {
     color: rgb(231, 231, 231) !important;
 }
 
-.text-left{
+.text-left {
     text-align: left;
 }
 
-.pedidosDetails{
-    width:100%; display: flex; justify-content:space-between;
+.pedidosDetails {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
     padding: 10px 10px 5px 10px;
     margin-bottom: 10px;
     border-bottom: 3px solid #ddd;
 }
 
-.pedidosDetails i{
+.pedidosDetails i {
     cursor: pointer;
     color: $azul-3;
 }
 
-.pedidosIndividualesDetails{
+.pedidosIndividualesDetails {
     width: 100%;
     padding: 10px 5px 5px;
 }
 
-@media (max-width: 460px){
-    input.form-control, select.form-select{
+@media (max-width: 460px) {
+    input.form-control,
+    select.form-select {
         height: 34px;
     }
 
-    input, select, textarea{
+    input,
+    select,
+    textarea {
         font-size: 12px !important;
     }
 
-    label, p, span, b{
+    label,
+    p,
+    span,
+    b {
         font-size: 14px;
     }
 }
 
-.empty{
+.empty {
     color: #212529;
     background-color: #fff;
     border-color: #ff3232;
@@ -255,9 +270,7 @@
     box-shadow: 0 0 0 0.25rem rgba(253, 13, 13, 0.25);
 }
 
-
-
-.sidebar-layout{
+.sidebar-layout {
     margin-top: 60px;
     height: calc(100vh - 60px);
     background-color: rgba(0, 0, 0, 0.637);
@@ -267,21 +280,19 @@
     z-index: 1;
 }
 
-
-
-.sidebar-menu{
+.sidebar-menu {
     margin-top: 60px;
-    width:240px;
+    width: 240px;
     height: calc(100vh - 60px);
-    background-color:white;
-    position:absolute;
+    background-color: white;
+    position: absolute;
     padding: 15px;
-    display:flex; 
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
     z-index: 1;
 }
 
-.menu-item{
+.menu-item {
     width: 100%;
     padding: 15px;
     text-decoration: none;
@@ -289,118 +300,142 @@
     cursor: pointer;
     font-weight: 500;
     color: $azul-2;
-    transition: .5s;
+    transition: 0.5s;
 
-    &:hover{
+    &:hover {
         color: $azul-1;
         padding: 15px 5px 15px 25px;
     }
 
-    &.btn-crear{
+    &.btn-crear {
         background-color: rgb(0, 87, 128);
         border-radius: 30px;
         text-align: center;
         color: white;
 
-        &:hover{
+        &:hover {
             background-color: rgb(0, 71, 104);
             color: rgb(228, 228, 228);
         }
     }
 }
-.pedido-tag{
-    padding: 2px 8px; color: white; border-radius: 12px; white-space:nowrap;
+.pedido-tag {
+    padding: 2px 8px;
+    color: white;
+    border-radius: 12px;
+    white-space: nowrap;
 }
-.page-link{
+.page-link {
     color: $azul-2 !important;
 }
 
-.page-item.active .page-link{
+.page-item.active .page-link {
     background-color: $azul-3 !important;
     border: 1px solid $azul-3 !important;
     color: white !important;
 }
 
-@media(max-width:1720px){
-    a, span, .nav-link, #nav, label, p, b{
+@media (max-width: 1720px) {
+    a,
+    span,
+    .nav-link,
+    #nav,
+    label,
+    p,
+    b {
         font-size: 16px;
     }
 
-    .nav-link{
+    .nav-link {
         padding: 8px 25px !important;
     }
 }
 
-
-
-@media(max-width:1400px){
-    a, span, .nav-link, #nav, label, p, b{
+@media (max-width: 1400px) {
+    a,
+    span,
+    .nav-link,
+    #nav,
+    label,
+    p,
+    b {
         font-size: 16px;
     }
 
-    .nav-link{
+    .nav-link {
         padding: 8px 25px !important;
     }
 }
 
-@media(max-width:460px){
-    a, span, .nav-link, #nav, label, p, b{
+@media (max-width: 460px) {
+    a,
+    span,
+    .nav-link,
+    #nav,
+    label,
+    p,
+    b {
         font-size: 14px;
     }
 
-    .nav-link{
+    .nav-link {
         padding: 8px 10px !important;
     }
 
-    .pedido-card{
+    .pedido-card {
         font-size: 12px;
-        span, p, div, b{
+        span,
+        p,
+        div,
+        b {
             font-size: 12px;
         }
     }
 
-    .pedidosDetails div, a, span{
+    .pedidosDetails div,
+    a,
+    span {
         font-size: 13px;
     }
 
-    .pedidosIndividualesDetails span{
+    .pedidosIndividualesDetails span {
         font-size: 12px;
     }
 }
 
-.pedido-card{
-	width: 100%;
-	min-height: 100px;
-	border-radius: 5px;
-	border: 2px solid #eee;
+.pedido-card {
+    width: 100%;
+    min-height: 100px;
+    border-radius: 5px;
+    border: 2px solid #eee;
     background-color: white;
-	color: black !important;
-	margin-bottom: 15px;
-	display: flex;
+    color: black !important;
+    margin-bottom: 15px;
+    display: flex;
     cursor: pointer;
-    transition: .4s;
-    &:hover{
-        box-shadow: 0px 5px 10px 2px rgba(0,0,0,0.25);
-        -webkit-box-shadow: 0px 5px 10px 2px rgba(0,0,0,0.25);
-        -moz-box-shadow: 0px 5px 10px 2px rgba(0,0,0,0.25);
+    transition: 0.4s;
+    &:hover {
+        box-shadow: 0px 5px 10px 2px rgba(0, 0, 0, 0.25);
+        -webkit-box-shadow: 0px 5px 10px 2px rgba(0, 0, 0, 0.25);
+        -moz-box-shadow: 0px 5px 10px 2px rgba(0, 0, 0, 0.25);
     }
 }
 
-.fc_programado{
+.fc_programado {
     color: $programado;
 }
-.fc_por_recoger{
+.fc_por_recoger {
     color: $por_recoger;
 }
-.fc_en_transito{
+.fc_en_transito {
     color: $azul-3;
 }
-.fc_entregado{
+.fc_entregado {
     color: $entregado;
 }
-.fc_falso_flete{
+.fc_falso_flete {
     color: $falso_flete;
 }
-.fc_anulado{
+.fc_anulado {
     color: $anulado;
 }
