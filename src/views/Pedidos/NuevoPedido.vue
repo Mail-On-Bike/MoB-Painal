@@ -821,7 +821,7 @@ export default {
       fechaMinima,
       fechaMaxima,
       saving,
-      formatUIDate
+      formatUIDate,
     };
   },
 };
