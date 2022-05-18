@@ -181,31 +181,9 @@
                         />
                       </div>
                     </div>
-                    <!-- <div class="col-4">
-                      <div class="form-group">
-                        <label for="">Numero</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-bind:class="{
-                            empty:
-                              validar && nuevoPedido.direccionRemitente == '',
-                          }"
-                          v-model="nuevoPedido.numeroDireccionRemitente"
-                          @change="changeNumeroDireccionRemitente($event)"
-                        />
-                      </div>
-                    </div> -->
                     <div class="col-12">
                       <div class="form-group">
                         <label for="">Distrito</label>
-                        <!-- <model-list-select
-                            name="distritoConsignado"
-                            placeholder="Buscar distrito..."
-                            :list="distritos"
-                            option-text="distrito"
-                            option-value="distrito"
-                          /> -->
                         <select
                           name=""
                           class="form-select"
@@ -310,21 +288,7 @@
                         />
                       </div>
                     </div>
-                    <!-- <div class="col-4">
-                      <div class="form-group">
-                        <label for="">Numero</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          :class="{
-                            empty:
-                              validar && nuevoPedido.direccionConsignado == '',
-                          }"
-                          v-model="nuevoPedido.numeroDireccionConsignado"
-                          @change="changeNumeroDireccionConsignado($event)"
-                        />
-                      </div>
-                    </div> -->
+
                     <div class="col-12">
                       <div class="form-group">
                         <label for="">Distrito</label>
@@ -388,7 +352,9 @@
             <div class="flex">
               <div class="pr-1 w-65">
                 <h6 class="white">Fecha de envío:</h6>
-                <p class="white-seconday">{{ nuevoPedido.fecha }}</p>
+                <p class="white-seconday">
+                  {{ formatUIDate(nuevoPedido.fecha) }}
+                </p>
               </div>
               <div class="w-35">
                 <h6 class="white">Tipo de Envío:</h6>
@@ -498,7 +464,12 @@ import PedidoService from "@/services/pedido.service";
 import { useStore } from "vuex";
 import Swal from "sweetalert2";
 import calcularComision from "@/services/comision.service";
-import { getCurrentDay, getFechaInicial, getFechaFinal } from "../../utils";
+import {
+  getCurrentDay,
+  getFechaInicial,
+  getFechaFinal,
+  formatUIDate,
+} from "../../utils";
 import { getSemana } from "../../services/semana-laboral.service";
 
 export default {
@@ -850,6 +821,7 @@ export default {
       fechaMinima,
       fechaMaxima,
       saving,
+      formatUIDate
     };
   },
 };
