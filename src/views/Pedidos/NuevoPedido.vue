@@ -189,6 +189,9 @@
                           }"
                           v-model="nuevoPedido.direccionRemitente"
                         />
+                        <p class="pt-2">
+                          {{ countDireccionRemitente }} de 150 caracteres
+                        </p>
                       </div>
                     </div>
                     <div class="col-12">
@@ -227,6 +230,9 @@
                           v-model="nuevoPedido.otroDatoRemitente"
                           :maxLength="250"
                         ></textarea>
+                        <p class="text-end pt-2">
+                          {{ countOtroDatoRemitente }} de 250 caracteres
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -305,6 +311,9 @@
                           }"
                           v-model="nuevoPedido.direccionConsignado"
                         />
+                        <p class="pt-2">
+                          {{ countDireccionConsignado }} de 150 caracteres
+                        </p>
                       </div>
                     </div>
 
@@ -344,6 +353,9 @@
                           v-model="nuevoPedido.otroDatoConsignado"
                           :maxLength="250"
                         ></textarea>
+                        <p class="text-end pt-2">
+                          {{ countOtroDatoConsignado }} de 250 caracteres
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -503,6 +515,20 @@ export default {
     const fechaMinima = ref();
     const fechaMaxima = ref();
     const saving = ref(false);
+
+    const countOtroDatoRemitente = computed(() => {
+      return nuevoPedido.otroDatoRemitente.length;
+    });
+    const countOtroDatoConsignado = computed(() => {
+      return nuevoPedido.otroDatoConsignado.length;
+    });
+
+    const countDireccionRemitente = computed(() => {
+      return nuevoPedido.direccionRemitente.length;
+    });
+    const countDireccionConsignado = computed(() => {
+      return nuevoPedido.direccionConsignado.length;
+    });
 
     const store = useStore();
     const router = useRouter();
@@ -842,6 +868,10 @@ export default {
       fechaMaxima,
       saving,
       formatUIDate,
+      countOtroDatoRemitente,
+      countOtroDatoConsignado,
+      countDireccionRemitente,
+      countDireccionConsignado,
     };
   },
 };
