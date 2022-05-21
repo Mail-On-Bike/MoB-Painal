@@ -16,6 +16,7 @@
                 id=""
                 class="form-select"
                 v-model="nuevoPedido.tipoEnvio"
+                required
               >
                 <option value="E-Commerce">E-Commerce</option>
                 <option value="Express">Express</option>
@@ -45,6 +46,7 @@
                 name=""
                 id=""
                 v-model="nuevoPedido.formaPago"
+                required
               >
                 <option
                   v-for="formaDePago in formasDePago"
@@ -65,6 +67,7 @@
                 :class="{ empty: validar && nuevoPedido.fecha == '' }"
                 :min="fechaMinima"
                 :max="fechaMaxima"
+                required
               />
             </div>
           </div>
@@ -76,6 +79,7 @@
                 id=""
                 class="form-select"
                 v-model="nuevoPedido.tipoCarga"
+                required
               >
                 <option
                   v-for="tipo in tiposDeCarga"
@@ -145,6 +149,8 @@
                         <input
                           type="text"
                           class="form-control"
+                          :maxLength="100"
+                          required
                           v-bind:class="{
                             empty:
                               validar && nuevoPedido.contactoRemitente == '',
@@ -159,6 +165,8 @@
                         <input
                           type="text"
                           class="form-control"
+                          :maxLength="15"
+                          required
                           v-bind:class="{
                             empty:
                               validar && nuevoPedido.telefonoRemitente == '',
@@ -173,42 +181,26 @@
                         <input
                           type="text"
                           class="form-control"
+                          :maxLength="150"
+                          required
                           v-bind:class="{
                             empty:
                               validar && nuevoPedido.direccionRemitente == '',
                           }"
                           v-model="nuevoPedido.direccionRemitente"
                         />
+                        <p class="pt-2">
+                          {{ countDireccionRemitente }} de 150 caracteres
+                        </p>
                       </div>
                     </div>
-                    <!-- <div class="col-4">
-                      <div class="form-group">
-                        <label for="">Numero</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-bind:class="{
-                            empty:
-                              validar && nuevoPedido.direccionRemitente == '',
-                          }"
-                          v-model="nuevoPedido.numeroDireccionRemitente"
-                          @change="changeNumeroDireccionRemitente($event)"
-                        />
-                      </div>
-                    </div> -->
                     <div class="col-12">
                       <div class="form-group">
                         <label for="">Distrito</label>
-                        <!-- <model-list-select
-                            name="distritoConsignado"
-                            placeholder="Buscar distrito..."
-                            :list="distritos"
-                            option-text="distrito"
-                            option-value="distrito"
-                          /> -->
                         <select
                           name=""
                           class="form-select"
+                          required
                           v-bind:class="{
                             empty:
                               validar && nuevoPedido.distritoRemitente == '',
@@ -236,7 +228,11 @@
                           rows="3"
                           style="resize: none"
                           v-model="nuevoPedido.otroDatoRemitente"
+                          :maxLength="250"
                         ></textarea>
+                        <p class="text-end pt-2">
+                          {{ countOtroDatoRemitente }} de 250 caracteres
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -264,6 +260,7 @@
                         <input
                           type="text"
                           class="form-control"
+                          :maxLength="150"
                           v-model="nuevoPedido.empresaConsignado"
                         />
                       </div>
@@ -274,6 +271,8 @@
                         <input
                           type="text"
                           class="form-control"
+                          :maxLength="100"
+                          required
                           v-bind:class="{
                             empty:
                               validar && nuevoPedido.contactoConsignado == '',
@@ -288,6 +287,8 @@
                         <input
                           type="text"
                           class="form-control"
+                          :maxLength="15"
+                          required
                           v-bind:class="{
                             empty:
                               validar && nuevoPedido.telefonoConsignado == '',
@@ -301,6 +302,8 @@
                         <label for="">Dirección</label>
                         <input
                           type="text"
+                          :maxLength="150"
+                          required
                           class="form-control"
                           :class="{
                             empty:
@@ -308,28 +311,18 @@
                           }"
                           v-model="nuevoPedido.direccionConsignado"
                         />
+                        <p class="pt-2">
+                          {{ countDireccionConsignado }} de 150 caracteres
+                        </p>
                       </div>
                     </div>
-                    <!-- <div class="col-4">
-                      <div class="form-group">
-                        <label for="">Numero</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          :class="{
-                            empty:
-                              validar && nuevoPedido.direccionConsignado == '',
-                          }"
-                          v-model="nuevoPedido.numeroDireccionConsignado"
-                          @change="changeNumeroDireccionConsignado($event)"
-                        />
-                      </div>
-                    </div> -->
+
                     <div class="col-12">
                       <div class="form-group">
                         <label for="">Distrito</label>
                         <select
                           name=""
+                          required
                           class="form-select"
                           v-bind:class="{
                             empty:
@@ -358,7 +351,11 @@
                           rows="3"
                           style="resize: none"
                           v-model="nuevoPedido.otroDatoConsignado"
+                          :maxLength="250"
                         ></textarea>
+                        <p class="text-end pt-2">
+                          {{ countOtroDatoConsignado }} de 250 caracteres
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -388,7 +385,9 @@
             <div class="flex">
               <div class="pr-1 w-65">
                 <h6 class="white">Fecha de envío:</h6>
-                <p class="white-seconday">{{ nuevoPedido.fecha }}</p>
+                <p class="white-seconday">
+                  {{ formatUIDate(nuevoPedido.fecha) }}
+                </p>
               </div>
               <div class="w-35">
                 <h6 class="white">Tipo de Envío:</h6>
@@ -498,7 +497,12 @@ import PedidoService from "@/services/pedido.service";
 import { useStore } from "vuex";
 import Swal from "sweetalert2";
 import calcularComision from "@/services/comision.service";
-import { getCurrentDay, getFechaInicial, getFechaFinal } from "../../utils";
+import {
+  getCurrentDay,
+  getFechaInicial,
+  getFechaFinal,
+  formatUIDate,
+} from "../../utils";
 import { getSemana } from "../../services/semana-laboral.service";
 
 export default {
@@ -512,17 +516,30 @@ export default {
     const fechaMaxima = ref();
     const saving = ref(false);
 
+    const countOtroDatoRemitente = computed(() => {
+      return nuevoPedido.otroDatoRemitente.length;
+    });
+    const countOtroDatoConsignado = computed(() => {
+      return nuevoPedido.otroDatoConsignado.length;
+    });
+
+    const countDireccionRemitente = computed(() => {
+      return nuevoPedido.direccionRemitente.length;
+    });
+    const countDireccionConsignado = computed(() => {
+      return nuevoPedido.direccionConsignado.length;
+    });
+
     const store = useStore();
     const router = useRouter();
 
-    let distritos = ref();
+    const distritos = ref();
 
     const tiposDeCarga = computed(() => store.state.auxiliares.tiposDeCarga);
     const modalidades = computed(() => store.state.auxiliares.modalidades);
     const tiposDeEnvio = computed(() => store.state.auxiliares.tiposDeEnvio);
     const clienteData = computed(() => store.getters.clienteData);
-    //const formasDePago = computed(() => store.state.auxiliares.formasDePago);
-    let formasDePago = ref([
+    const formasDePago = ref([
       { id: 5, pago: "Efectivo en Origen" },
       { id: 6, pago: "Efectivo en Destino" },
       { id: 7, pago: "Transferencia" },
@@ -850,6 +867,11 @@ export default {
       fechaMinima,
       fechaMaxima,
       saving,
+      formatUIDate,
+      countOtroDatoRemitente,
+      countOtroDatoConsignado,
+      countDireccionRemitente,
+      countDireccionConsignado,
     };
   },
 };

@@ -1,6 +1,12 @@
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
+dayjs.locale("es");
+
+export const formatUIDate = (fecha) => {
+  return dayjs(fecha).format("DD MMMM YYYY");
+};
+
 export const getToday = () => {
   return dayjs().day() === 0 ? 7 : dayjs().day();
 };
