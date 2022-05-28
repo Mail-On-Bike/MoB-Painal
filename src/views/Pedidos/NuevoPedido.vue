@@ -39,7 +39,7 @@
             </div>
           </div>
 
-          <div class="col-6">
+          <div class="col-8">
             <div class="form-group">
               <label class="white" for="">Formas de Pago</label>
               <select
@@ -58,7 +58,7 @@
               </select>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-4">
             <div class="form-group">
               <label class="white" for="recaudo">Recaudo</label>
               <input
@@ -79,7 +79,7 @@
                 type="date"
                 class="form-control"
                 v-model="nuevoPedido.fecha"
-                :class="{ empty: validar && nuevoPedido.fecha == '' }"
+                :class="{ empty: validar && !nuevoPedido.fecha }"
                 :min="fechaMinima"
                 :max="fechaMaxima"
                 required
@@ -168,9 +168,10 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.contactoRemitente == '',
+                              validar &&
+                              nuevoPedido.contactoRemitente.trim() === '',
                           }"
-                          v-model="nuevoPedido.contactoRemitente"
+                          v-model.trim="nuevoPedido.contactoRemitente"
                         />
                       </div>
                     </div>
@@ -184,9 +185,10 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.telefonoRemitente == '',
+                              validar &&
+                              nuevoPedido.telefonoRemitente.trim() === '',
                           }"
-                          v-model="nuevoPedido.telefonoRemitente"
+                          v-model.trim="nuevoPedido.telefonoRemitente"
                         />
                       </div>
                     </div>
@@ -200,9 +202,10 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.direccionRemitente == '',
+                              validar &&
+                              nuevoPedido.direccionRemitente.trim() === '',
                           }"
-                          v-model="nuevoPedido.direccionRemitente"
+                          v-model.trim="nuevoPedido.direccionRemitente"
                         />
                         <p class="pt-2">
                           {{ countDireccionRemitente }} de 150 caracteres
@@ -218,10 +221,11 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.distritoRemitente == '',
+                              validar &&
+                              nuevoPedido.distritoRemitente.trim() === '',
                           }"
                           id=""
-                          v-model="nuevoPedido.distritoRemitente"
+                          v-model.trim="nuevoPedido.distritoRemitente"
                         >
                           <option
                             v-for="distrito in distritos"
@@ -290,7 +294,8 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.contactoConsignado == '',
+                              validar &&
+                              nuevoPedido.contactoConsignado.trim() === '',
                           }"
                           v-model="nuevoPedido.contactoConsignado"
                         />
@@ -306,7 +311,8 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.telefonoConsignado == '',
+                              validar &&
+                              nuevoPedido.telefonoConsignado.trim() === '',
                           }"
                           v-model="nuevoPedido.telefonoConsignado"
                         />
@@ -322,7 +328,8 @@
                           class="form-control"
                           :class="{
                             empty:
-                              validar && nuevoPedido.direccionConsignado == '',
+                              validar &&
+                              nuevoPedido.direccionConsignado.trim() === '',
                           }"
                           v-model="nuevoPedido.direccionConsignado"
                         />
@@ -341,7 +348,8 @@
                           class="form-select"
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.distritoConsignado == '',
+                              validar &&
+                              nuevoPedido.distritoConsignado.trim() === '',
                           }"
                           id=""
                           v-model="nuevoPedido.distritoConsignado"
@@ -526,6 +534,7 @@ import {
   getFechaInicial,
   getFechaFinal,
   formatUIDate,
+  isValid,
 } from "../../utils";
 import { getSemana } from "../../services/semana-laboral.service";
 
@@ -652,7 +661,8 @@ export default {
     };
 
     const continuarPedido = () => {
-      if (validarForm()) {
+      // Validando formulario
+      if (!isValid(nuevoPedido)) {
         validar.value = true;
         Swal.fire({
           title: "Heey!",
@@ -660,51 +670,38 @@ export default {
           icon: "warning",
           confirmButtonText: "OK",
         });
-      } else {
-        if (!isLaborable()) {
-          console.log("check", !isLaborable());
-          Swal.fire({
-            title: "Heey!",
-            text: "No se puede solicitar un envio para el día seleccionado",
-            icon: "warning",
-            confirmButtonText: "OK",
-          });
-        } else if (esDomingo(nuevoPedido.fecha)) {
-          Swal.fire({
-            title: "¡Oops!",
-            text: "No se pueden solicitar envios en Domingo",
-            icon: "warning",
-            confirmButtonText: "OK",
-            timer: 2000,
-          });
-        } else {
-          continuar.value = false;
-          calcularDistancia();
-        }
+        return;
       }
+      // Validando que la fecha elegida es laborable
+      if (!isLaborable()) {
+        Swal.fire({
+          title: "Heey!",
+          text: "No se puede solicitar un envio para el día seleccionado",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+      // Validando que la fecha elegida no sea domingo
+      if (esDomingo(nuevoPedido.fecha)) {
+        Swal.fire({
+          title: "¡Oops!",
+          text: "No se pueden solicitar envios en Domingo",
+          icon: "warning",
+          confirmButtonText: "OK",
+          timer: 2000,
+        });
+        return;
+      }
+
+      // Si todo sale bien, calcula la distancia y cambia de vista
+      continuar.value = false;
+      calcularDistancia();
     };
 
     const editarPedido = () => {
       continuar.value = true;
-      //validar.value = false;
-    };
-
-    const validarForm = () => {
-      if (
-        !nuevoPedido.fecha ||
-        nuevoPedido.contactoRemitente.trim() === "" ||
-        nuevoPedido.telefonoRemitente.trim() === "" ||
-        nuevoPedido.direccionRemitente.trim() === "" ||
-        nuevoPedido.distritoRemitente.trim() === "" ||
-        nuevoPedido.contactoConsignado.trim() === "" ||
-        nuevoPedido.telefonoConsignado.trim() === "" ||
-        nuevoPedido.direccionConsignado.trim() === "" ||
-        nuevoPedido.distritoConsignado.trim() === ""
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      validar.value = false;
     };
 
     // const changeNumeroDireccionRemitente = (e) => {
@@ -754,11 +751,10 @@ export default {
         nuevoPedido.CO2Ahorrado = stats.co2;
         nuevoPedido.ruido = stats.ruido;
 
+        saving.value = false;
         return nuevoPedido.distancia;
       } catch (error) {
         console.error("Mensaje de error: ", error.message);
-      } finally {
-        saving.value = false;
       }
     };
 
