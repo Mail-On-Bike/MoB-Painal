@@ -812,7 +812,7 @@ export default {
         nuevoPedido.direccionRemitente = clienteData.value.direccion;
         nuevoPedido.distritoRemitente = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoRemitente = clienteData.value.telefono;
-        nuevoPedido.otroDatoRemitente = clienteData.value.otroDato;
+        nuevoPedido.otroDatoRemitente = clienteData.value.otroDato ?? "";
       } else {
         nuevoPedido.contactoRemitente = "";
         nuevoPedido.direccionRemitente = "";
@@ -829,7 +829,7 @@ export default {
         nuevoPedido.distritoConsignado = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoConsignado = clienteData.value.telefono;
         nuevoPedido.empresaConsignado = clienteData.value.razonComercial;
-        nuevoPedido.otroDatoConsignado = clienteData.value.otroDato;
+        nuevoPedido.otroDatoConsignado = clienteData.value.otroDato ?? "";
       } else {
         nuevoPedido.contactoConsignado = "";
         nuevoPedido.direccionConsignado = "";
