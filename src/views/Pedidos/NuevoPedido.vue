@@ -701,7 +701,7 @@ export default {
 
     const editarPedido = () => {
       continuar.value = true;
-      validar.value = false;
+      // validar.value = false;
     };
 
     // const changeNumeroDireccionRemitente = (e) => {
@@ -754,6 +754,7 @@ export default {
         saving.value = false;
         return nuevoPedido.distancia;
       } catch (error) {
+        saving.value = false;
         console.error("Mensaje de error: ", error.message);
       }
     };
@@ -767,61 +768,62 @@ export default {
           confirmButtonText: "OK",
           timer: 2000,
         });
-      } else {
-        try {
-          saving.value = true;
-          nuevoPedido.mobiker = "Asignar MoBiker";
-          nuevoPedido.status = 1;
-          nuevoPedido.tramite = 0;
+        return;
+      }
 
-          const comision = await calcularComision(
-            nuevoPedido.mobiker,
-            nuevoPedido.tipoEnvio
-          );
+      try {
+        saving.value = true;
+        nuevoPedido.mobiker = "Asignar MoBiker";
+        nuevoPedido.status = 1;
+        nuevoPedido.tramite = 0;
 
-          nuevoPedido.comision = nuevoPedido.tarifa * comision;
+        const comision = await calcularComision(
+          nuevoPedido.mobiker,
+          nuevoPedido.tipoEnvio
+        );
 
-          const response = await PedidoService.storageNuevoPedido(nuevoPedido);
+        nuevoPedido.comision = nuevoPedido.tarifa * comision;
 
-          if (response.status === 200) {
-            if (
-              nuevoPedido.distritoConsignado.includes("*") ||
-              nuevoPedido.distritoRemitente.includes("*")
-            ) {
-              Swal.fire({
-                title: "Distrito con restricciones",
-                text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
-                icon: "info",
-                showCancelButton: false,
-                confirmButtonText: "¡Entendido!",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  Swal.fire({
-                    title: "¡Genial!",
-                    text: response.data.message,
-                    icon: "success",
-                    confirmButtonText: "OK",
-                    timer: 2000,
-                  });
-                }
-              });
-            } else {
-              Swal.fire({
-                title: "¡Genial!",
-                text: response.data.message,
-                icon: "success",
-                confirmButtonText: "OK",
-                timer: 2000,
-              });
-            }
+        const response = await PedidoService.storageNuevoPedido(nuevoPedido);
 
-            router.push("/misPedidos");
+        if (response.status === 200) {
+          if (
+            nuevoPedido.distritoConsignado.includes("*") ||
+            nuevoPedido.distritoRemitente.includes("*")
+          ) {
+            Swal.fire({
+              title: "Distrito con restricciones",
+              text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
+              icon: "info",
+              showCancelButton: false,
+              confirmButtonText: "¡Entendido!",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Swal.fire({
+                  title: "¡Genial!",
+                  text: response.data.message,
+                  icon: "success",
+                  confirmButtonText: "OK",
+                  timer: 2000,
+                });
+              }
+            });
+          } else {
+            Swal.fire({
+              title: "¡Genial!",
+              text: response.data.message,
+              icon: "success",
+              confirmButtonText: "OK",
+              timer: 2000,
+            });
           }
-        } catch (error) {
-          console.error(error);
-        } finally {
+
           saving.value = false;
+          router.push("/misPedidos");
         }
+      } catch (error) {
+        saving.value = false;
+        console.error(error);
       }
     };
 
