@@ -38,7 +38,8 @@
               </select>
             </div>
           </div>
-          <div class="col-12">
+
+          <div class="col-6">
             <div class="form-group">
               <label class="white" for="">Formas de Pago</label>
               <select
@@ -57,6 +58,20 @@
               </select>
             </div>
           </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label class="white" for="recaudo">Recaudo</label>
+              <input
+                id="recaudo"
+                type="number"
+                step="0.01"
+                min="0"
+                class="form-control"
+                v-model.number="nuevoPedido.recaudo"
+              />
+            </div>
+          </div>
+
           <div class="col-6">
             <div class="form-group">
               <label class="white" for="">Fecha de Envío</label>
@@ -370,6 +385,7 @@
           </div>
         </div>
       </div>
+
       <div v-if="!continuar" class="container">
         <div class="row">
           <div class="text-left col-12 card-pedido">
@@ -454,8 +470,16 @@
               </div>
             </div>
 
-            <h6 class="white">Forma de pago predefinida:</h6>
-            <p class="white-seconday">Credito</p>
+            <div class="flex">
+              <div class="pr-1 w-65">
+                <h6 class="white">Forma de pago:</h6>
+                <p class="white-seconday">{{ nuevoPedido.formaPago }}</p>
+              </div>
+              <div class="w-35">
+                <h6 class="white">Recaudo:</h6>
+                <p class="white-seconday">S./ {{ nuevoPedido.recaudo }}</p>
+              </div>
+            </div>
           </div>
           <div class="col-12"><br /></div>
           <div class="col-6">
@@ -752,7 +776,6 @@ export default {
           saving.value = true;
           nuevoPedido.mobiker = "Asignar MoBiker";
           nuevoPedido.status = 1;
-          nuevoPedido.recaudo = 0;
           nuevoPedido.tramite = 0;
 
           const comision = await calcularComision(
