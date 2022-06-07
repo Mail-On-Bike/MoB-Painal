@@ -38,7 +38,8 @@
               </select>
             </div>
           </div>
-          <div class="col-12">
+
+          <div class="col-8">
             <div class="form-group">
               <label class="white" for="">Formas de Pago</label>
               <select
@@ -57,6 +58,20 @@
               </select>
             </div>
           </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="white" for="recaudo">Recaudo</label>
+              <input
+                id="recaudo"
+                type="number"
+                step="0.01"
+                min="0"
+                class="form-control"
+                v-model.number="nuevoPedido.recaudo"
+              />
+            </div>
+          </div>
+
           <div class="col-6">
             <div class="form-group">
               <label class="white" for="">Fecha de Envío</label>
@@ -64,7 +79,7 @@
                 type="date"
                 class="form-control"
                 v-model="nuevoPedido.fecha"
-                :class="{ empty: validar && nuevoPedido.fecha == '' }"
+                :class="{ empty: validar && !nuevoPedido.fecha }"
                 :min="fechaMinima"
                 :max="fechaMaxima"
                 required
@@ -153,9 +168,10 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.contactoRemitente == '',
+                              validar &&
+                              nuevoPedido.contactoRemitente.trim() === '',
                           }"
-                          v-model="nuevoPedido.contactoRemitente"
+                          v-model.trim="nuevoPedido.contactoRemitente"
                         />
                       </div>
                     </div>
@@ -169,9 +185,10 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.telefonoRemitente == '',
+                              validar &&
+                              nuevoPedido.telefonoRemitente.trim() === '',
                           }"
-                          v-model="nuevoPedido.telefonoRemitente"
+                          v-model.trim="nuevoPedido.telefonoRemitente"
                         />
                       </div>
                     </div>
@@ -185,9 +202,10 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.direccionRemitente == '',
+                              validar &&
+                              nuevoPedido.direccionRemitente.trim() === '',
                           }"
-                          v-model="nuevoPedido.direccionRemitente"
+                          v-model.trim="nuevoPedido.direccionRemitente"
                         />
                         <p class="pt-2">
                           {{ countDireccionRemitente }} de 150 caracteres
@@ -203,10 +221,11 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.distritoRemitente == '',
+                              validar &&
+                              nuevoPedido.distritoRemitente.trim() === '',
                           }"
                           id=""
-                          v-model="nuevoPedido.distritoRemitente"
+                          v-model.trim="nuevoPedido.distritoRemitente"
                         >
                           <option
                             v-for="distrito in distritos"
@@ -275,7 +294,8 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.contactoConsignado == '',
+                              validar &&
+                              nuevoPedido.contactoConsignado.trim() === '',
                           }"
                           v-model="nuevoPedido.contactoConsignado"
                         />
@@ -291,7 +311,8 @@
                           required
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.telefonoConsignado == '',
+                              validar &&
+                              nuevoPedido.telefonoConsignado.trim() === '',
                           }"
                           v-model="nuevoPedido.telefonoConsignado"
                         />
@@ -307,7 +328,8 @@
                           class="form-control"
                           :class="{
                             empty:
-                              validar && nuevoPedido.direccionConsignado == '',
+                              validar &&
+                              nuevoPedido.direccionConsignado.trim() === '',
                           }"
                           v-model="nuevoPedido.direccionConsignado"
                         />
@@ -326,7 +348,8 @@
                           class="form-select"
                           v-bind:class="{
                             empty:
-                              validar && nuevoPedido.distritoConsignado == '',
+                              validar &&
+                              nuevoPedido.distritoConsignado.trim() === '',
                           }"
                           id=""
                           v-model="nuevoPedido.distritoConsignado"
@@ -370,6 +393,7 @@
           </div>
         </div>
       </div>
+
       <div v-if="!continuar" class="container">
         <div class="row">
           <div class="text-left col-12 card-pedido">
@@ -454,8 +478,16 @@
               </div>
             </div>
 
-            <h6 class="white">Forma de pago predefinida:</h6>
-            <p class="white-seconday">Credito</p>
+            <div class="flex">
+              <div class="pr-1 w-65">
+                <h6 class="white">Forma de pago:</h6>
+                <p class="white-seconday">{{ nuevoPedido.formaPago }}</p>
+              </div>
+              <div class="w-35">
+                <h6 class="white">Recaudo:</h6>
+                <p class="white-seconday">S./ {{ nuevoPedido.recaudo }}</p>
+              </div>
+            </div>
           </div>
           <div class="col-12"><br /></div>
           <div class="col-6">
@@ -502,6 +534,7 @@ import {
   getFechaInicial,
   getFechaFinal,
   formatUIDate,
+  isValid,
 } from "../../utils";
 import { getSemana } from "../../services/semana-laboral.service";
 
@@ -628,7 +661,8 @@ export default {
     };
 
     const continuarPedido = () => {
-      if (validarForm()) {
+      // Validando formulario
+      if (!isValid(nuevoPedido)) {
         validar.value = true;
         Swal.fire({
           title: "Heey!",
@@ -636,51 +670,38 @@ export default {
           icon: "warning",
           confirmButtonText: "OK",
         });
-      } else {
-        if (!isLaborable()) {
-          console.log("check", !isLaborable());
-          Swal.fire({
-            title: "Heey!",
-            text: "No se puede solicitar un envio para el día seleccionado",
-            icon: "warning",
-            confirmButtonText: "OK",
-          });
-        } else if (esDomingo(nuevoPedido.fecha)) {
-          Swal.fire({
-            title: "¡Oops!",
-            text: "No se pueden solicitar envios en Domingo",
-            icon: "warning",
-            confirmButtonText: "OK",
-            timer: 2000,
-          });
-        } else {
-          continuar.value = false;
-          calcularDistancia();
-        }
+        return;
       }
+      // Validando que la fecha elegida es laborable
+      if (!isLaborable()) {
+        Swal.fire({
+          title: "Heey!",
+          text: "No se puede solicitar un envio para el día seleccionado",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+      // Validando que la fecha elegida no sea domingo
+      if (esDomingo(nuevoPedido.fecha)) {
+        Swal.fire({
+          title: "¡Oops!",
+          text: "No se pueden solicitar envios en Domingo",
+          icon: "warning",
+          confirmButtonText: "OK",
+          timer: 2000,
+        });
+        return;
+      }
+
+      // Si todo sale bien, calcula la distancia y cambia de vista
+      continuar.value = false;
+      calcularDistancia();
     };
 
     const editarPedido = () => {
       continuar.value = true;
-      //validar.value = false;
-    };
-
-    const validarForm = () => {
-      if (
-        !nuevoPedido.fecha ||
-        nuevoPedido.contactoRemitente.trim() === "" ||
-        nuevoPedido.telefonoRemitente.trim() === "" ||
-        nuevoPedido.direccionRemitente.trim() === "" ||
-        nuevoPedido.distritoRemitente.trim() === "" ||
-        nuevoPedido.contactoConsignado.trim() === "" ||
-        nuevoPedido.telefonoConsignado.trim() === "" ||
-        nuevoPedido.direccionConsignado.trim() === "" ||
-        nuevoPedido.distritoConsignado.trim() === ""
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      // validar.value = false;
     };
 
     // const changeNumeroDireccionRemitente = (e) => {
@@ -730,11 +751,11 @@ export default {
         nuevoPedido.CO2Ahorrado = stats.co2;
         nuevoPedido.ruido = stats.ruido;
 
+        saving.value = false;
         return nuevoPedido.distancia;
       } catch (error) {
-        console.error("Mensaje de error: ", error.message);
-      } finally {
         saving.value = false;
+        console.error("Mensaje de error: ", error.message);
       }
     };
 
@@ -747,62 +768,62 @@ export default {
           confirmButtonText: "OK",
           timer: 2000,
         });
-      } else {
-        try {
-          saving.value = true;
-          nuevoPedido.mobiker = "Asignar MoBiker";
-          nuevoPedido.status = 1;
-          nuevoPedido.recaudo = 0;
-          nuevoPedido.tramite = 0;
+        return;
+      }
 
-          const comision = await calcularComision(
-            nuevoPedido.mobiker,
-            nuevoPedido.tipoEnvio
-          );
+      try {
+        saving.value = true;
+        nuevoPedido.mobiker = "Asignar MoBiker";
+        nuevoPedido.status = 1;
+        nuevoPedido.tramite = 0;
 
-          nuevoPedido.comision = nuevoPedido.tarifa * comision;
+        const comision = await calcularComision(
+          nuevoPedido.mobiker,
+          nuevoPedido.tipoEnvio
+        );
 
-          const response = await PedidoService.storageNuevoPedido(nuevoPedido);
+        nuevoPedido.comision = nuevoPedido.tarifa * comision;
 
-          if (response.status === 200) {
-            if (
-              nuevoPedido.distritoConsignado.includes("*") ||
-              nuevoPedido.distritoRemitente.includes("*")
-            ) {
-              Swal.fire({
-                title: "Distrito con restricciones",
-                text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
-                icon: "info",
-                showCancelButton: false,
-                confirmButtonText: "¡Entendido!",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  Swal.fire({
-                    title: "¡Genial!",
-                    text: response.data.message,
-                    icon: "success",
-                    confirmButtonText: "OK",
-                    timer: 2000,
-                  });
-                }
-              });
-            } else {
-              Swal.fire({
-                title: "¡Genial!",
-                text: response.data.message,
-                icon: "success",
-                confirmButtonText: "OK",
-                timer: 2000,
-              });
-            }
+        const response = await PedidoService.storageNuevoPedido(nuevoPedido);
 
-            router.push("/misPedidos");
+        if (response.status === 200) {
+          if (
+            nuevoPedido.distritoConsignado.includes("*") ||
+            nuevoPedido.distritoRemitente.includes("*")
+          ) {
+            Swal.fire({
+              title: "Distrito con restricciones",
+              text: "El pedido será revisado para validar cobertura, te avisaremos si es aprobado o rechazado",
+              icon: "info",
+              showCancelButton: false,
+              confirmButtonText: "¡Entendido!",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Swal.fire({
+                  title: "¡Genial!",
+                  text: response.data.message,
+                  icon: "success",
+                  confirmButtonText: "OK",
+                  timer: 2000,
+                });
+              }
+            });
+          } else {
+            Swal.fire({
+              title: "¡Genial!",
+              text: response.data.message,
+              icon: "success",
+              confirmButtonText: "OK",
+              timer: 2000,
+            });
           }
-        } catch (error) {
-          console.error(error);
-        } finally {
+
           saving.value = false;
+          router.push("/misPedidos");
         }
+      } catch (error) {
+        saving.value = false;
+        console.error(error);
       }
     };
 
@@ -812,7 +833,7 @@ export default {
         nuevoPedido.direccionRemitente = clienteData.value.direccion;
         nuevoPedido.distritoRemitente = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoRemitente = clienteData.value.telefono;
-        nuevoPedido.otroDatoRemitente = clienteData.value.otroDato;
+        nuevoPedido.otroDatoRemitente = clienteData.value.otroDato ?? "";
       } else {
         nuevoPedido.contactoRemitente = "";
         nuevoPedido.direccionRemitente = "";
@@ -829,7 +850,7 @@ export default {
         nuevoPedido.distritoConsignado = clienteData.value.distrito.distrito;
         nuevoPedido.telefonoConsignado = clienteData.value.telefono;
         nuevoPedido.empresaConsignado = clienteData.value.razonComercial;
-        nuevoPedido.otroDatoConsignado = clienteData.value.otroDato;
+        nuevoPedido.otroDatoConsignado = clienteData.value.otroDato ?? "";
       } else {
         nuevoPedido.contactoConsignado = "";
         nuevoPedido.direccionConsignado = "";

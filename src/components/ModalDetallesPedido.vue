@@ -165,6 +165,10 @@
                       <span>Tarifa</span>
                       <h5 class="fw-600">S./ {{ pedido.tarifa }}</h5>
                     </div>
+                    <div class="d-flex flex-column justify-content-center">
+                      <span>Recaudo</span>
+                      <h5 class="fw-600">S./ {{ pedido.recaudo }}</h5>
+                    </div>
                   </div>
                 </div>
                 <div class="d-flex w-100 flex-column">
@@ -192,7 +196,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="closeModal">
-              Close
+              Cerrar
             </button>
           </div>
         </div>
