@@ -136,7 +136,6 @@ export const auxiliares = {
     async getZonaCobertura({ commit }) {
       try {
         const response = await AuxiliarService.getDistritosZonaCobertura();
-        console.log(response);
         commit("setZonaCobertura", response.data);
       } catch (error) {
         console.error(error);

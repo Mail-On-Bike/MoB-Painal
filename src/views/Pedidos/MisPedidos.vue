@@ -571,6 +571,7 @@ import { useStore } from "vuex";
 import PedidoService from "@/services/pedido.service";
 import ModalDetallesPedido from "../../components/ModalDetallesPedido.vue";
 import { formatUIDate } from "../../utils";
+import { useRouter } from 'vue-router';
 
 export default {
   components: {
@@ -578,6 +579,7 @@ export default {
   },
   setup() {
     const store = useStore();
+    const router = useRouter();
     let pedidosTodos = ref([]);
     let pedidosTodosPaginados = ref({});
     let currentPageTodos = ref(1);
@@ -608,33 +610,45 @@ export default {
     let pedidoSeleccionado = ref({});
 
     onMounted(() => {
-      getPedidos();
+      try {
+        getPedidos();
+      } catch (error) {
+        localStorage.clear();
+        store.dispatch('logout')
+        router.push('/login')
+      }
     });
 
     const getPedidos = async (page = 0, size = 500) => {
-      let params = {
-        id: store.state.user.clienteAsignado.id,
-        page: page,
-        size: size,
-      };
-      let response = await PedidoService.getPedidosDelCliente(params);
-      pedidosTodos.value = response.data.pedidos;
-      totalPedidos.value = response.data.totalPedidos;
-      currentPage.value = response.data.currentPage;
-      totalPages.value = response.data.totalPages;
+      try {
+        let params = {
+          id: store.state.user.clienteAsignado.id,
+          page: page,
+          size: size,
+        };
+        let response = await PedidoService.getPedidosDelCliente(params);
+        pedidosTodos.value = response.data.pedidos;
+        totalPedidos.value = response.data.totalPedidos;
+        currentPage.value = response.data.currentPage;
+        totalPages.value = response.data.totalPages;
 
-      if (response.data.totalPedidos === 0) {
-        mostrandoDesde.value = 0;
-        mostrandoHasta.value = 0;
-      } else if (response.data.totalPedidos <= size) {
-        mostrandoDesde.value = 1;
-        mostrandoHasta.value = response.data.pedidos.length;
-      } else {
-        mostrandoDesde.value = response.data.currentPage * size + 1;
-        mostrandoHasta.value =
-          mostrandoDesde.value - 1 + response.data.pedidos.length;
+        if (response.data.totalPedidos === 0) {
+          mostrandoDesde.value = 0;
+          mostrandoHasta.value = 0;
+        } else if (response.data.totalPedidos <= size) {
+          mostrandoDesde.value = 1;
+          mostrandoHasta.value = response.data.pedidos.length;
+        } else {
+          mostrandoDesde.value = response.data.currentPage * size + 1;
+          mostrandoHasta.value =
+            mostrandoDesde.value - 1 + response.data.pedidos.length;
+        }
+        filterPedidos();
+      } catch (error) {
+        localStorage.clear();
+        store.dispatch('logout')
+        router.push('/login')
       }
-      filterPedidos();
     };
 
     const filterPedidos = () => {
