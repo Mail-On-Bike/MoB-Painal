@@ -117,12 +117,14 @@
 import {computed, onMounted, ref} from 'vue';
 import { useStore } from 'vuex';
 import PedidoService from '@/services/pedido.service';
+import { useRouter } from 'vue-router';
 export default {
   name: 'Home',
   components: {
   },
   setup(){
     const store = useStore()
+    const router = useRouter()
 		const user = computed(() => store.state.user);
 
     let totalPedidosActuales = ref(0);
@@ -140,16 +142,23 @@ export default {
 		})
 
     const getPedidosActuales = async () => {
-			let params = {
-				id: store.state.user.clienteAsignado.id,
-        desde: getTodayDate(),
-        hasta: getTodayDate()
-			}
-			let response = await PedidoService.getPedidosDelCliente(params);
-			pedidosActuales.value = response.data.pedidos;
-			totalPedidosActuales.value = response.data.totalPedidos;
+      try{
+        let params = {
+          id: store.state.user.clienteAsignado.id,
+          desde: getTodayDate(),
+          hasta: getTodayDate()
+        }
+        let response = await PedidoService.getPedidosDelCliente(params);
+        pedidosActuales.value = response.data.pedidos;
+        totalPedidosActuales.value = response.data.totalPedidos;
 
-      filterPedidos();
+        filterPedidos();
+
+      } catch (error) {
+        localStorage.clear();
+        store.dispatch('logout')
+        router.push('/login')
+      }
     }
 
     const filterPedidos = () => {

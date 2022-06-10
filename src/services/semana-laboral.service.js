@@ -12,6 +12,6 @@ export async function getSemana() {
 
     return data;
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
   }
 }
