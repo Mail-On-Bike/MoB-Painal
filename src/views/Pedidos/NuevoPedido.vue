@@ -581,11 +581,32 @@ export default {
     let semana;
 
     onBeforeMount(async () => {
-      semana = await getSemana();
-      fechaMinima.value = getFechaInicial(semana);
-      fechaMaxima.value = getFechaFinal(semana, fechaMinima.value);
-
-      nuevoPedido.fecha = fechaMinima.value;
+      try {
+        semana = await getSemana();
+        if(typeof semana === 'undefined') { 
+          localStorage.clear();
+          store.dispatch('logout')
+          router.push('/login')
+        }else{
+          if (nuevoPedido.tipoEnvio === "E-Commerce") {
+            distritos.value = store.state.auxiliares.zonaCobertura;
+            Swal.fire({
+              title: "¡Hey!",
+              text: 'Te recordamos que algunos distritos no los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
+              icon: "info",
+              confirmButtonText: "OK",
+            });
+          } else {
+            distritos.value = store.state.auxiliares.distritos;
+          }
+        }
+        fechaMinima.value = getFechaInicial(semana);
+        fechaMaxima.value = getFechaFinal(semana, fechaMinima.value);
+  
+        nuevoPedido.fecha = fechaMinima.value;
+      } catch (error) {
+        console.log(error.message)
+      }
     });
 
     const isLaborable = () => {
@@ -615,17 +636,18 @@ export default {
     nuevoPedido.rolCliente = clienteData.value.rolCliente.rol;
     nuevoPedido.operador = store.getters.operador;
 
-    if (nuevoPedido.tipoEnvio === "E-Commerce") {
-      distritos.value = store.state.auxiliares.zonaCobertura;
-      Swal.fire({
-        title: "¡Hey!",
-        text: 'Te recordamos que algunos distritos no los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
-        icon: "info",
-        confirmButtonText: "OK",
-      });
-    } else {
-      distritos.value = store.state.auxiliares.distritos;
-    }
+    // if (nuevoPedido.tipoEnvio === "E-Commerce") {
+    //   console.log("Primero aqui")
+    //   distritos.value = store.state.auxiliares.zonaCobertura;
+    //   Swal.fire({
+    //     title: "¡Hey!",
+    //     text: 'Te recordamos que algunos distritos no los cubrimos por completo, los encontrarás marcados con un " * ", y estarán sujetos a revisión',
+    //     icon: "info",
+    //     confirmButtonText: "OK",
+    //   });
+    // } else {
+    //   distritos.value = store.state.auxiliares.distritos;
+    // }
 
     nuevoPedido.empresaRemitente = clienteData.value.razonComercial;
     nuevoPedido.contactoRemitente = "";

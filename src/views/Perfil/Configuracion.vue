@@ -248,7 +248,6 @@ export default {
     };
 
     const updatePassword = async (pswd) => {
-      console.log(pswd.value);
       if (pswd.value.newPassword === pswd.value.confirmPassword) {
         const response = await AuthService.changePassword(
           user.value.id,
