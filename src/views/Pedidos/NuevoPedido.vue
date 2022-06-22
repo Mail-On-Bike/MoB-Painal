@@ -601,7 +601,8 @@ export default {
           }
         }
         fechaMinima.value = getFechaInicial(semana);
-        fechaMaxima.value = getFechaFinal(semana, fechaMinima.value);
+        console.log(getFechaFinal(semana, fechaMinima.value))
+        // fechaMaxima.value = getFechaFinal(semana, fechaMinima.value);
   
         nuevoPedido.fecha = fechaMinima.value;
       } catch (error) {
@@ -610,8 +611,18 @@ export default {
     });
 
     const isLaborable = () => {
-      const currentDay = getCurrentDay(fechaMinima.value);
-      return semana.find((day) => day.id === currentDay).isLaborable;
+      if(typeof semana === 'undefined'){
+        return "Ocurrió un error, intenta recargar la página"
+      }
+      const currentDay = getCurrentDay(nuevoPedido.fecha);
+      const day = semana.find((day) => { 
+        return day.id === currentDay 
+      });
+      if(typeof day === 'undefined'){
+        return "Ocurrió un error, intenta recargar la página" 
+      }
+      
+      return day.isLaborable ? day.isLaborable : "No se puede solicitar un envio para el día seleccionado, intenta con otro día"
     };
 
     const esDomingo = (date) => {
@@ -695,10 +706,11 @@ export default {
         return;
       }
       // Validando que la fecha elegida es laborable
-      if (!isLaborable()) {
+      const laborable = isLaborable()
+      if (laborable !== true) {
         Swal.fire({
           title: "Heey!",
-          text: "No se puede solicitar un envio para el día seleccionado",
+          text: laborable,
           icon: "warning",
           confirmButtonText: "OK",
         });
