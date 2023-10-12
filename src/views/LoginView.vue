@@ -33,71 +33,62 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { useStore } from "vuex";
 import { reactive, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 
-export default {
-  setup() {
-    const store = useStore();
-    const router = useRouter();
-    const user = reactive({
-      email: "",
-      password: "",
-    });
+const store = useStore();
+const router = useRouter();
+const user = reactive({
+  email: "",
+  password: "",
+});
 
-    // beforeMounted
-    onBeforeMount(() => {
-      if (store.getters.loggedIn) {
-        router.push("/");
-      }
-    });
+// beforeMounted
+onBeforeMount(() => {
+  if (store.getters.loggedIn) {
+    router.push("/");
+  }
+});
 
-    // methods
-    const login = async () => {
+// methods
+const login = async () => {
+  Swal.fire({
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+  let response = await store.dispatch("login", user);
+  if (response) {
+    if (response.accesToken != "") {
+      store.dispatch("auxiliares/getDistritosLima");
+      store.dispatch("auxiliares/getZonaCobertura");
+      store.dispatch("auxiliares/getTiposEnvios");
+      store.dispatch("auxiliares/getTiposCarga");
+      store.dispatch("auxiliares/getModalidades");
+      store.dispatch("auxiliares/getFormasPago");
+      router.push("/");
       Swal.fire({
+        title: "Loggeado!",
+        icon: "success",
+        showConfirmButton: false,
         allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
       });
-      let response = await store.dispatch("login", user);
-      if (response) {
-        if (response.accesToken != "") {
-          store.dispatch("auxiliares/getDistritosLima");
-          store.dispatch("auxiliares/getZonaCobertura");
-          store.dispatch("auxiliares/getTiposEnvios");
-          store.dispatch("auxiliares/getTiposCarga");
-          store.dispatch("auxiliares/getModalidades");
-          store.dispatch("auxiliares/getFormasPago");
-          router.push("/");
-          Swal.fire({
-            title: "Loggeado!",
-            icon: "success",
-            showConfirmButton: false,
-            allowOutsideClick: false,
-          });
-          setTimeout(function() {
-            Swal.close();
-          }, 1000);
-        }
-      } else {
-        Swal.fire({
-          title: "Oops!",
-          text: "Usuario o contraseña incorrectos",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      }
-    };
-
-    return {
-      login,
-      user,
-    };
-  },
+      setTimeout(function () {
+        Swal.close();
+      }, 1000);
+    }
+  } else {
+    Swal.fire({
+      title: "Oops!",
+      text: "Usuario o contraseña incorrectos",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  }
 };
 </script>
 

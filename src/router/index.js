@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
-import Login from "../views/Login.vue";
+import Home from "../views/HomeView.vue";
+import Login from "../views/LoginView.vue";
 import NuevoPedido from "../views/Pedidos/NuevoPedido.vue";
 import MisPedidos from "../views/Pedidos/MisPedidos.vue";
 import Configuracion from "../views/Perfil/Configuracion.vue";
@@ -30,12 +30,6 @@ const routes = [
     path: "/configuracion",
     name: "Configuracion",
     component: Configuracion,
-  },
-  {
-    path: "/about",
-    name: "About",
-    component: () =>
-      import("../views/About.vue"),
   },
 ];
 
