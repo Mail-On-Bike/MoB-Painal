@@ -13,7 +13,7 @@ export default async function calcularTarifa(
     const {
       data: { tarifa, tarifaSugerida },
     } = await axios.post(
-      `${process.env.VUE_APP_HERMES}/calcular-tarifa`,
+      `${import.meta.env.VITE_HERMES}/calcular-tarifa`,
       {
         distancia,
         tipoEnvio,

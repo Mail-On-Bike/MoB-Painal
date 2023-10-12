@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.VUE_APP_HERMES;
+const API_URL = import.meta.env.VITE_HERMES;
 
 class AuxiliarService {
   getRolesUsers() {

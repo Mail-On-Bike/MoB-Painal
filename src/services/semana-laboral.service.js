@@ -4,7 +4,7 @@ import authHeader from "@/services/auth-header";
 export async function getSemana() {
   try {
     const { data } = await axios.get(
-      `${process.env.VUE_APP_HERMES}/semana-laboral`,
+      `${import.meta.env.VITE_HERMES}/semana-laboral`,
       {
         headers: authHeader(),
       }
