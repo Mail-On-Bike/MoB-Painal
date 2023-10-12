@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "@/services/auth-header";
 
-const API_URL = process.env.VUE_APP_HERMES;
+const API_URL = import.meta.env.VITE_HERMES;
 class AuthService {
   async login(user) {
     try {

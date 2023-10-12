@@ -9,7 +9,7 @@ export default async function consultarApi(
 ) {
   try {
     const { data } = await axios.post(
-      `${process.env.VUE_APP_HERMES}/consultar-google-maps-api`,
+      `${import.meta.env.VITE_HERMES}/consultar-google-maps-api`,
       { origen, distritoOrigen, destino, distritoDestino },
       {
         headers: authHeader(),
