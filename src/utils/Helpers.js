@@ -1,4 +1,4 @@
-export default class Helpers {
+export class Helpers {
   constructor() {}
 
   /**

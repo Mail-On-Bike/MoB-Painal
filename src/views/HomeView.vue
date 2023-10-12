@@ -142,7 +142,7 @@ import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import PedidoService from "@/services/pedido.service";
 import { useRouter } from "vue-router";
-import Helpers from "@/utils";
+import { Helpers } from "@/utils";
 
 const store = useStore();
 const router = useRouter();
