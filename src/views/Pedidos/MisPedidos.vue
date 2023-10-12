@@ -21,6 +21,8 @@
           Total: <b>{{ totalPedidos }}</b>
         </div>
       </div>
+
+      <!-- Filtros -->
       <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
           <button
@@ -79,6 +81,7 @@
           </button>
         </li>
       </ul>
+
       <div class="tab-content" id="myTabContent">
         <div
           class="tab-pane fade show active"
@@ -118,16 +121,32 @@
               "
             >
               <div style="display: flex; flex-direction: column">
-                <b class="w-100">Origen</b>
-                <span class="w-100"
-                  >{{ pedido.direccionRemitente }},
-                  {{ pedido.distritoRemitente }}</span
+                <h4 class="text-black">Pedido #{{ pedido.id }}</h4>
+                <!-- Origen -->
+                <div
+                  v-if="!pedido.rolCliente === 'Remitente'"
+                  style="display: flex; flex-direction: column"
                 >
-                <b class="w-100">Destino</b>
-                <span class="w-100"
-                  >{{ pedido.direccionConsignado }},
-                  {{ pedido.distrito.distrito }}</span
-                >
+                  <b class="w-100">Origen</b>
+                  <span class="w-100"
+                    >{{ pedido.direccionRemitente }},
+                    {{ pedido.distritoRemitente }}</span
+                  >
+                </div>
+
+                <!-- Destino -->
+                <div style="display: flex; flex-direction: column">
+                  <b class="w-100">Destino</b>
+                  <span class="w-100"
+                    >{{ pedido.direccionConsignado }},
+                    {{ pedido.distrito.distrito }}</span
+                  >
+                  <b class="w-100">Contacto</b>
+                  <span class="w-100">
+                    {{ pedido.contactoConsignado }}, telf:
+                    {{ pedido.telefonoConsignado }}
+                  </span>
+                </div>
               </div>
               <div
                 style="
@@ -200,6 +219,7 @@
             </ul>
           </nav>
         </div>
+
         <div
           class="tab-pane fade"
           id="activos"
@@ -320,6 +340,7 @@
             </ul>
           </nav>
         </div>
+
         <div
           class="tab-pane fade"
           id="finalizados"
@@ -558,216 +579,175 @@
       </div>
     </div>
   </div>
+
   <modal-detalles-pedido
     @closeModal="closeModal"
     :showModal="showModal"
     :pedido="pedidoSeleccionado"
-  ></modal-detalles-pedido>
+  />
 </template>
 
-<script>
+<script setup>
 import { inject, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import PedidoService from "@/services/pedido.service";
 import ModalDetallesPedido from "../../components/ModalDetallesPedido.vue";
 import { formatUIDate } from "../../utils";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
-export default {
-  components: {
-    ModalDetallesPedido,
-  },
-  setup() {
-    const store = useStore();
-    const router = useRouter();
-    let pedidosTodos = ref([]);
-    let pedidosTodosPaginados = ref({});
-    let currentPageTodos = ref(1);
-    let totalPedidosTodos = ref(0);
+const store = useStore();
+const router = useRouter();
+let pedidosTodos = ref([]);
+let pedidosTodosPaginados = ref({});
+let currentPageTodos = ref(1);
+let totalPedidosTodos = ref(0);
 
-    let pedidosActivos = ref([]);
-    let pedidosActivosPaginados = ref({});
-    let currentPageActivos = ref(1);
-    let totalPedidosActivos = ref(0);
+let pedidosActivos = ref([]);
+let pedidosActivosPaginados = ref({});
+let currentPageActivos = ref(1);
+let totalPedidosActivos = ref(0);
 
-    let pedidosFinalizados = ref([]);
-    let pedidosFinalizadosPaginados = ref({});
-    let currentPageFinalizados = ref(1);
-    let totalPedidosFinalizados = ref(0);
+let pedidosFinalizados = ref([]);
+let pedidosFinalizadosPaginados = ref({});
+let currentPageFinalizados = ref(1);
+let totalPedidosFinalizados = ref(0);
 
-    let pedidosAnulados = ref([]);
-    let pedidosAnuladosPaginados = ref({});
-    let currentPageAnulados = ref(1);
-    let totalPedidosAnulados = ref(0);
+let pedidosAnulados = ref([]);
+let pedidosAnuladosPaginados = ref({});
+let currentPageAnulados = ref(1);
+let totalPedidosAnulados = ref(0);
 
-    let totalPedidos = ref(0);
-    let mostrandoDesde = ref(0);
-    let mostrandoHasta = ref(0);
-    let currentPage = ref(0);
-    let totalPages = ref(0);
+let totalPedidos = ref(0);
+let mostrandoDesde = ref(0);
+let mostrandoHasta = ref(0);
+let currentPage = ref(0);
+let totalPages = ref(0);
 
-    let showModal = ref(false);
-    let pedidoSeleccionado = ref({});
+let showModal = ref(false);
+let pedidoSeleccionado = ref({});
 
-    onMounted(() => {
-      try {
-        getPedidos();
-      } catch (error) {
-        localStorage.clear();
-        store.dispatch('logout')
-        router.push('/login')
-      }
-    });
+onMounted(() => {
+  try {
+    getPedidos();
+  } catch (error) {
+    localStorage.clear();
+    store.dispatch("logout");
+    router.push("/login");
+  }
+});
 
-    const getPedidos = async (page = 0, size = 500) => {
-      try {
-        let params = {
-          id: store.state.user.clienteAsignado.id,
-          page: page,
-          size: size,
-        };
-        let response = await PedidoService.getPedidosDelCliente(params);
-        pedidosTodos.value = response.data.pedidos;
-        totalPedidos.value = response.data.totalPedidos;
-        currentPage.value = response.data.currentPage;
-        totalPages.value = response.data.totalPages;
-
-        if (response.data.totalPedidos === 0) {
-          mostrandoDesde.value = 0;
-          mostrandoHasta.value = 0;
-        } else if (response.data.totalPedidos <= size) {
-          mostrandoDesde.value = 1;
-          mostrandoHasta.value = response.data.pedidos.length;
-        } else {
-          mostrandoDesde.value = response.data.currentPage * size + 1;
-          mostrandoHasta.value =
-            mostrandoDesde.value - 1 + response.data.pedidos.length;
-        }
-        filterPedidos();
-      } catch (error) {
-        localStorage.clear();
-        store.dispatch('logout')
-        router.push('/login')
-      }
+const getPedidos = async (page = 0, size = 500) => {
+  try {
+    let params = {
+      id: store.state.user.clienteAsignado.id,
+      page: page,
+      size: size,
     };
+    let response = await PedidoService.getPedidosDelCliente(params);
+    pedidosTodos.value = response.data.pedidos;
+    totalPedidos.value = response.data.totalPedidos;
+    currentPage.value = response.data.currentPage;
+    totalPages.value = response.data.totalPages;
 
-    const filterPedidos = () => {
-      totalPedidosTodos.value = pedidosTodos.value.length;
-      pedidosTodosPaginados.value = paginar(pedidosTodos.value);
+    if (response.data.totalPedidos === 0) {
+      mostrandoDesde.value = 0;
+      mostrandoHasta.value = 0;
+    } else if (response.data.totalPedidos <= size) {
+      mostrandoDesde.value = 1;
+      mostrandoHasta.value = response.data.pedidos.length;
+    } else {
+      mostrandoDesde.value = response.data.currentPage * size + 1;
+      mostrandoHasta.value =
+        mostrandoDesde.value - 1 + response.data.pedidos.length;
+    }
+    filterPedidos();
+  } catch (error) {
+    localStorage.clear();
+    store.dispatch("logout");
+    router.push("/login");
+  }
+};
 
-      // Pedidos Activos (Status 1:Programado, 2:Por Recoger, 3:En Ruta)
-      pedidosActivos.value = pedidosTodos.value.filter((pedido) => {
-        if (
-          pedido.statusId == 1 ||
-          pedido.statusId == 2 ||
-          pedido.statusId == 3
-        ) {
-          return pedido;
-        }
-      });
-      totalPedidosActivos.value = pedidosActivos.value.length;
-      pedidosActivosPaginados.value = paginar(pedidosActivos.value);
+const filterPedidos = () => {
+  totalPedidosTodos.value = pedidosTodos.value.length;
+  pedidosTodosPaginados.value = paginar(pedidosTodos.value);
 
-      // Pedidos Finalizados (Status 4:Entregado, 5:Falso Flete)
-      pedidosFinalizados.value = pedidosTodos.value.filter((pedido) => {
-        if (pedido.statusId == 4 || pedido.statusId == 5) {
-          return pedido;
-        }
-      });
-      totalPedidosFinalizados.value = pedidosFinalizados.value.length;
-      pedidosFinalizadosPaginados.value = paginar(pedidosFinalizados.value);
+  // Pedidos Activos (Status 1:Programado, 2:Por Recoger, 3:En Ruta)
+  pedidosActivos.value = pedidosTodos.value.filter((pedido) => {
+    if (pedido.statusId == 1 || pedido.statusId == 2 || pedido.statusId == 3) {
+      return pedido;
+    }
+  });
+  totalPedidosActivos.value = pedidosActivos.value.length;
+  pedidosActivosPaginados.value = paginar(pedidosActivos.value);
 
-      // Pedidos Anulados (Status 6:Anulado)
-      pedidosAnulados.value = pedidosTodos.value.filter((pedido) => {
-        if (pedido.statusId == 6) {
-          return pedido;
-        }
-      });
-      totalPedidosAnulados.value = pedidosAnulados.value.length;
-      pedidosAnuladosPaginados.value = paginar(pedidosAnulados.value);
-    };
+  // Pedidos Finalizados (Status 4:Entregado, 5:Falso Flete)
+  pedidosFinalizados.value = pedidosTodos.value.filter((pedido) => {
+    if (pedido.statusId == 4 || pedido.statusId == 5) {
+      return pedido;
+    }
+  });
+  totalPedidosFinalizados.value = pedidosFinalizados.value.length;
+  pedidosFinalizadosPaginados.value = paginar(pedidosFinalizados.value);
 
-    const paginar = (pedidosParaPaginar, max = 50) => {
-      let count = 1;
-      let page = 1;
-      let pedidosPaginados = {};
+  // Pedidos Anulados (Status 6:Anulado)
+  pedidosAnulados.value = pedidosTodos.value.filter((pedido) => {
+    if (pedido.statusId == 6) {
+      return pedido;
+    }
+  });
+  totalPedidosAnulados.value = pedidosAnulados.value.length;
+  pedidosAnuladosPaginados.value = paginar(pedidosAnulados.value);
+};
+
+const paginar = (pedidosParaPaginar, max = 50) => {
+  let count = 1;
+  let page = 1;
+  let pedidosPaginados = {};
+  pedidosPaginados[page] = [];
+  for (let i = 0; i < pedidosParaPaginar.length; i++) {
+    pedidosPaginados[page].push(pedidosParaPaginar[i]);
+    if (count % max == 0 && count < pedidosParaPaginar.length) {
+      page++;
       pedidosPaginados[page] = [];
-      for (let i = 0; i < pedidosParaPaginar.length; i++) {
-        pedidosPaginados[page].push(pedidosParaPaginar[i]);
-        if (count % max == 0 && count < pedidosParaPaginar.length) {
-          page++;
-          pedidosPaginados[page] = [];
-        }
-        count++;
-      }
+    }
+    count++;
+  }
 
-      return pedidosPaginados;
-    };
+  return pedidosPaginados;
+};
 
-    const changePage = (tipo, pagina) => {
-      switch (tipo) {
-        case "todos": {
-          currentPageTodos.value = pagina;
-          break;
-        }
-        case "activos": {
-          currentPageActivos.value = pagina;
-          break;
-        }
-        case "finalizados": {
-          currentPageFinalizados.value = pagina;
-          break;
-        }
-        case "anulados": {
-          currentPageAnulados.value = pagina;
-          break;
-        }
-      }
-      scroll();
-    };
+const changePage = (tipo, pagina) => {
+  switch (tipo) {
+    case "todos": {
+      currentPageTodos.value = pagina;
+      break;
+    }
+    case "activos": {
+      currentPageActivos.value = pagina;
+      break;
+    }
+    case "finalizados": {
+      currentPageFinalizados.value = pagina;
+      break;
+    }
+    case "anulados": {
+      currentPageAnulados.value = pagina;
+      break;
+    }
+  }
+  scroll();
+};
 
-    const scroll = inject("scrollToTop");
+const scroll = inject("scrollToTop");
 
-    const detallesPedido = (pedido) => {
-      pedidoSeleccionado.value = pedido;
-      showModal.value = true;
-    };
+const detallesPedido = (pedido) => {
+  pedidoSeleccionado.value = pedido;
+  showModal.value = true;
+};
 
-    const closeModal = () => {
-      showModal.value = false;
-    };
-
-    return {
-      pedidosTodos,
-      pedidosTodosPaginados,
-      currentPageTodos,
-      totalPedidosTodos,
-      pedidosActivos,
-      pedidosActivosPaginados,
-      currentPageActivos,
-      totalPedidosActivos,
-      pedidosFinalizados,
-      pedidosFinalizadosPaginados,
-      currentPageFinalizados,
-      totalPedidosFinalizados,
-      pedidosAnulados,
-      pedidosAnuladosPaginados,
-      currentPageAnulados,
-      totalPedidosAnulados,
-      currentPage,
-      totalPages,
-      mostrandoDesde,
-      mostrandoHasta,
-      totalPedidos,
-      showModal,
-      pedidoSeleccionado,
-      changePage,
-      getPedidos,
-      detallesPedido,
-      closeModal,
-      formatUIDate,
-    };
-  },
+const closeModal = () => {
+  showModal.value = false;
 };
 </script>
 
