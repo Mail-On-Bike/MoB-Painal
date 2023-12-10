@@ -13,7 +13,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalScrollableTitle">
-              Datos del pedido: # {{ pedido.id }}
+              Datos del pedido: #{{ pedido.id }}
             </h5>
             <button
               type="button"
@@ -118,6 +118,15 @@
                       {{ pedido.direccionConsignado }},
                       {{ pedido.distrito.distrito }}</span
                     >
+                    <div
+                      v-if="pedido.empresaConsignado.trim() !== ''"
+                      class="d-flex justify-content-between"
+                    >
+                      <span class="mb-1"
+                        ><i class="fas fa-briefcase me-1"></i>
+                        {{ pedido.empresaConsignado }}</span
+                      >
+                    </div>
                     <div class="d-flex justify-content-between">
                       <span class="mb-1"
                         ><i class="fas fa-user me-1"></i>
@@ -140,6 +149,7 @@
                     </div>
                   </div>
                 </div>
+                <!-- Datos del pedido -->
                 <div class="d-flex w-100 flex-column">
                   <div
                     class="w-100 d-flex"
@@ -165,12 +175,23 @@
                       <span>Tarifa</span>
                       <h5 class="fw-600">S./ {{ pedido.tarifa }}</h5>
                     </div>
-                    <div class="d-flex flex-column justify-content-center">
+                    <div
+                      v-if="pedido.tramite > 0"
+                      class="d-flex flex-column justify-content-center"
+                    >
+                      <span>Tramite</span>
+                      <h5 class="fw-600">S./ {{ pedido.tramite }}</h5>
+                    </div>
+                    <div
+                      v-if="pedido.recaudo > 0"
+                      class="d-flex flex-column justify-content-center"
+                    >
                       <span>Recaudo</span>
                       <h5 class="fw-600">S./ {{ pedido.recaudo }}</h5>
                     </div>
                   </div>
                 </div>
+                <!-- Comentarios -->
                 <div class="d-flex w-100 flex-column">
                   <div
                     class="w-100 d-flex"
@@ -191,6 +212,10 @@
                     <span>{{ pedido.comentario }}</span>
                   </div>
                 </div>
+                <!-- Status de Pago -->
+                <div v-if="!pedido.compensado" class="d-flex w-100 flex-column">
+                  Pendiente de Pago
+                </div>
               </div>
             </div>
           </div>
@@ -206,22 +231,17 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { formatUIDate } from "../utils";
 
-export default {
-  props: ["showModal", "pedido"],
-  emits: ["closeModal"],
-  setup(props, { emit }) {
-    const closeModal = () => {
-      emit("closeModal");
-    };
+defineProps({
+  showModal: { type: Boolean },
+  pedido: { type: Object },
+});
+const emit = defineEmits(["closeModal"]);
 
-    return {
-      closeModal,
-      formatUIDate,
-    };
-  },
+const closeModal = () => {
+  emit("closeModal");
 };
 </script>
 

@@ -4,7 +4,7 @@ import authHeader from "@/services/auth-header";
 export default async function calcularComision(mobiker, tipoEnvio) {
   try {
     const { data } = await axios.get(
-      `${process.env.VUE_APP_HERMES}/calcular-comision?mob=${mobiker}&tipoEnvio=${tipoEnvio}`,
+      `${import.meta.env.VITE_HERMES}/calcular-comision?mob=${mobiker}&tipoEnvio=${tipoEnvio}`,
       {
         headers: authHeader(),
       }

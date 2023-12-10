@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row" style="width: 100%;">
+    <div class="row" style="width: 100%">
       <div class="col-md-2"></div>
       <div class="col-md-8 col-12">
         <div class="row">
@@ -8,7 +8,13 @@
             <div class="row">
               <div class="col-12">
                 <div class="profile-header" style="">
-                  <div class="img-profile" style=""></div>
+                  <div class="img-profile" style="">
+                    {{
+                      Helpers.GetInitialLetterUppercase(
+                        user.clienteAsignado.razonComercial
+                      )
+                    }}
+                  </div>
                   <div class="profile-info" style="">
                     <h6>{{ user.clienteAsignado.razonComercial }}</h6>
                     <span>{{ user.username }}</span>
@@ -25,14 +31,14 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 row profile-content" style="margin-top:15px;">
+              <div class="col-12 row profile-content" style="margin-top: 15px">
                 <div class="col-12 profile-title">
                   <div>
                     <h5>Mi Perfil (Usuario)</h5>
                     <hr class="hr-title" />
                   </div>
                   <div>
-                    <button class="btn-sm " @click="detallesUsuario">
+                    <button class="btn-sm" @click="detallesUsuario">
                       <i class="fas fa-edit"></i>
                     </button>
                   </div>
@@ -57,12 +63,16 @@
                 </div>
                 <div
                   class="col-lg-3 col-md-4 col-sm-6 col-xs-12"
-                  style="min-height: 62px;"
+                  style="min-height: 62px"
                 >
                   <div class="profile-item">
                     <label>Contraseña</label>
                     <div
-                      style="display:flex;justify-content:space-between; align-items:center; "
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      "
                     >
                       <input
                         :type="showPswd ? 'text' : 'password'"
@@ -168,121 +178,99 @@
   ></modal-change-password>
 </template>
 
-<script>
+<script setup>
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import ModalDetallesUsuario from "../../components/ModalDetallesUsuario.vue";
 import AuthService from "../../services/auth.service";
 import Swal from "sweetalert2";
 import ModalChangePassword from "../../components/ModalChangePassword.vue";
+import { Helpers } from "@/utils";
 
-export default {
-  components: {
-    ModalDetallesUsuario,
-    ModalChangePassword,
-  },
-  setup() {
-    const store = useStore();
-    const user = computed(() => store.state.user);
-    let showModal = ref(false);
-    let showModalPswd = ref(false);
+const store = useStore();
+const user = computed(() => store.state.user);
+let showModal = ref(false);
+let showModalPswd = ref(false);
 
-    let showPswd = ref(false);
-    let userProfile = ref({
-      contacto: user.value.contacto,
-      email: user.value.email,
-      username: user.value.username,
-      telefono: user.value.telefono,
+let showPswd = ref(false);
+let userProfile = ref({
+  contacto: user.value.contacto,
+  email: user.value.email,
+  username: user.value.username,
+  telefono: user.value.telefono,
+});
+
+// const showPassword = () => {
+//   if (showPswd.value) {
+//     showPswd.value = true;
+//   } else {
+//     showPswd.value = false;
+//   }
+// };
+
+const detallesUsuario = () => {
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
+
+const updateProfile = async (profileUpdated) => {
+  profileUpdated.value["clienteId"] = user.value.clienteAsignado.id;
+  const response = await AuthService.updateProfileUser(
+    user.value.id,
+    profileUpdated.value
+  );
+  let responseUpdate = await store.dispatch("updateProfile", response);
+  if (responseUpdate) {
+    if (response.accesToken != "") {
+      Swal.fire({
+        title: "Actualizado con éxito!",
+        icon: "success",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        timer: 2000,
+      });
+      closeModal();
+    }
+  } else {
+    Swal.fire({
+      title: "Oops!",
+      text: "Ocurrió un error al actualizar",
+      icon: "error",
+      confirmButtonText: "OK",
     });
+  }
+};
 
-    const showPassword = () => {
-      if (showPswd.value) {
-        showPswd.value = true;
-      } else {
-        showPswd.value = false;
-      }
-    };
+const changePassword = () => {
+  showModalPswd.value = true;
+};
 
-    const detallesUsuario = () => {
-      showModal.value = true;
-    };
+const closeModalPswd = () => {
+  showModalPswd.value = false;
+};
 
-    const closeModal = () => {
-      showModal.value = false;
-    };
-
-    const updateProfile = async (profileUpdated) => {
-      profileUpdated.value["clienteId"] = user.value.clienteAsignado.id;
-      const response = await AuthService.updateProfileUser(
-        user.value.id,
-        profileUpdated.value
-      );
-      let responseUpdate = await store.dispatch("updateProfile", response);
-      if (responseUpdate) {
-        if (response.accesToken != "") {
-          Swal.fire({
-            title: "Actualizado con éxito!",
-            icon: "success",
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            timer: 2000,
-          });
-          closeModal();
-        }
-      } else {
-        Swal.fire({
-          title: "Oops!",
-          text: "Ocurrió un error al actualizar",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      }
-    };
-
-    const changePassword = () => {
-      showModalPswd.value = true;
-    };
-
-    const closeModalPswd = () => {
-      showModalPswd.value = false;
-    };
-
-    const updatePassword = async (pswd) => {
-      if (pswd.value.newPassword === pswd.value.confirmPassword) {
-        const response = await AuthService.changePassword(
-          user.value.id,
-          pswd.value
-        );
-        if (response) {
-          Swal.fire({
-            title: "Contraseña actualizada con éxito!",
-            icon: "success",
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            timer: 2000,
-          });
-          closeModalPswd();
-        }
-      } else {
-        console.log("Error");
-      }
-    };
-
-    return {
-      showPswd,
-      user,
-      userProfile,
-      showModal,
-      showModalPswd,
-      showPassword,
-      detallesUsuario,
-      updateProfile,
-      closeModal,
-      updatePassword,
-      changePassword,
-      closeModalPswd,
-    };
-  },
+const updatePassword = async (pswd) => {
+  if (pswd.value.newPassword === pswd.value.confirmPassword) {
+    const response = await AuthService.changePassword(
+      user.value.id,
+      pswd.value
+    );
+    if (response) {
+      Swal.fire({
+        title: "Contraseña actualizada con éxito!",
+        icon: "success",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        timer: 2000,
+      });
+      closeModalPswd();
+    }
+  } else {
+    console.log("Error");
+  }
 };
 </script>
 
@@ -350,13 +338,16 @@ export default {
 }
 
 .img-profile {
-  min-width: 70px;
-  min-height: 70px;
-  height: auto;
-  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
   background-color: aliceblue;
   margin-right: 10px;
-  max-width: 70px;
+  color: $azul-1;
+  font-size: 34px;
 }
 
 .pswd-hide-input {

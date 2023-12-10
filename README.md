@@ -13,8 +13,8 @@ npm install
 ## Variables de entorno
 
 - `NODE_ENV` determinar el entorno de la app.
-- `VUE_APP_TITLE` Configura el `title` de la app en el navegador.
-- `VUE_APP_HERMES` URL de Hermes
+- `VITE_TITLE` Configura el `title` de la app en el navegador.
+- `VITE_HERMES` URL de Hermes
 
 ### Compiles and hot-reloads for development
 

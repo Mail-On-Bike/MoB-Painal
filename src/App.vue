@@ -54,73 +54,59 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { useStore } from "vuex";
 import { computed, ref, provide } from "vue";
 import SidebarMenu from "./components/SidebarMenu.vue";
 import "./assets/scss/main.scss";
 import { useRouter } from "vue-router";
-export default {
-  components: {
-    SidebarMenu,
-  },
-  setup() {
-    const store = useStore();
-    const router = useRouter();
-    let loggedIn = computed(() => store.getters.loggedIn);
-    let showSidebar = ref(false);
-    const hideSidebar = () => {
-      showSidebar.value = false;
-    };
 
-    const mainLayout = ref();
-
-    // Función para hacer el routing de manera manual
-    const go = (link) => {
-      switch (link) {
-        case "home": {
-          router.push("/");
-          break;
-        }
-        case "misPedidos": {
-          router.push("/misPedidos");
-          break;
-        }
-        case "nuevoPedido": {
-          router.push("/nuevoPedido");
-          break;
-        }
-        case "ayuda": {
-          router.push("/ayuda");
-          break;
-        }
-        case "configuracion": {
-          router.push("/configuracion");
-          break;
-        }
-        case "cerrarSesion": {
-          store.dispatch("logout");
-          break;
-        }
-      }
-      hideSidebar();
-    };
-
-    const scrollToTop = () => {
-      mainLayout.value.scrollTop = 0;
-    };
-
-    provide("scrollToTop", scrollToTop);
-    return {
-      loggedIn,
-      showSidebar,
-      mainLayout,
-      hideSidebar,
-      go,
-      scrollToTop,
-    };
-  },
+const store = useStore();
+const router = useRouter();
+let loggedIn = computed(() => store.getters.loggedIn);
+let showSidebar = ref(false);
+const hideSidebar = () => {
+  showSidebar.value = false;
 };
+
+const mainLayout = ref();
+
+// Función para hacer el routing de manera manual
+const go = (link) => {
+  switch (link) {
+    case "home": {
+      router.push("/");
+      break;
+    }
+    case "misPedidos": {
+      router.push("/misPedidos");
+      break;
+    }
+    case "nuevoPedido": {
+      router.push("/nuevoPedido");
+      break;
+    }
+    case "ayuda": {
+      router.push("/ayuda");
+      break;
+    }
+    case "configuracion": {
+      router.push("/configuracion");
+      break;
+    }
+    case "cerrarSesion": {
+      store.dispatch("logout");
+      break;
+    }
+  }
+  hideSidebar();
+};
+
+const scrollToTop = () => {
+  mainLayout.value.scrollTop = 0;
+};
+
+provide("scrollToTop", scrollToTop);
 </script>
 
 <style lang="scss">
