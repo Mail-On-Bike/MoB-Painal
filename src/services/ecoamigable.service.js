@@ -6,7 +6,7 @@ export default async function calcularEstadisticas(distancia) {
     const {
       data: { co2, ruido },
     } = await axios.post(
-      `${process.env.VUE_APP_HERMES}/calcular-estadisticas-ecoamigables`,
+      `${import.meta.env.VITE_HERMES}/calcular-estadisticas-ecoamigables`,
       { distancia },
       {
         headers: authHeader(),
